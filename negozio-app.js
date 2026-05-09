@@ -19,48 +19,6 @@ const prodottiBase = [
 let inventario = [];
 let scontrino = {};
 
-const SCONTRINO_COOKIE = "negozio_scontrino";
-const SCONTRINO_COOKIE_MAX_AGE_SECONDS = 24 * 60 * 60;
-
-function salvaScontrinoSuCookie() {
-    const righe = Object.values(scontrino);
-
-    if (righe.length === 0) {
-        document.cookie = `${SCONTRINO_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
-        return;
-    }
-
-    const valore = encodeURIComponent(JSON.stringify(scontrino));
-    document.cookie = `${SCONTRINO_COOKIE}=${valore}; Max-Age=${SCONTRINO_COOKIE_MAX_AGE_SECONDS}; path=/; SameSite=Lax`;
-}
-
-function caricaScontrinoDaCookie() {
-    const prefisso = `${SCONTRINO_COOKIE}=`;
-    const cookie = document.cookie
-        .split(";")
-        .map(c => c.trim())
-        .find(c => c.startsWith(prefisso));
-
-    if (!cookie) {
-        return;
-    }
-
-    const valore = cookie.substring(prefisso.length);
-    if (!valore) {
-        return;
-    }
-
-    try {
-        const parsed = JSON.parse(decodeURIComponent(valore));
-        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-            scontrino = parsed;
-        }
-    } catch (error) {
-        console.warn("Cookie scontrino non valido:", error);
-        document.cookie = `${SCONTRINO_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
-    }
-}
-
 const emojiProdottiPerCategoria = [
     {
         categoria: "Frutta",
@@ -276,31 +234,12 @@ function aggiornaBadgeDB(stato, nomeFile) {
     }
 }
 
-function caricaDaLocalStorage() {
-    const salvato = localStorage.getItem("inventario-mini-market");
-    if (salvato) {
-        try {
-            inventario = JSON.parse(salvato);
-        } catch (e) {
-            console.warn("Inventario localStorage non valido, ripristino prodotti base.", e);
-            inventario = [...prodottiBase];
-        }
-    } else {
-        inventario = [...prodottiBase];
-    }
-}
-
 async function leggiDaCSV() {
     if (!dbFileHandle) return;
     const file = await dbFileHandle.getFile();
     const testo = await file.text();
     const letto = csvToInventario(testo);
-    if (letto.length === 0) {
-        inventario = [...prodottiBase];
-        await scriviCSV();
-    } else {
-        inventario = letto;
-    }
+    inventario = letto;
 }
 
 async function scriviCSV() {
@@ -311,27 +250,28 @@ async function scriviCSV() {
 }
 
 async function salvaInventario() {
-    if (dbFileHandle) {
-        try {
-            await scriviCSV();
-        } catch (e) {
-            console.error("Errore salvataggio CSV:", e);
-        }
-    } else {
-        localStorage.setItem("inventario-mini-market", JSON.stringify(inventario));
+    if (!dbFileHandle) {
+        alert("Apri o crea un file CSV prima di salvare l'inventario.");
+        return;
+    }
+
+    try {
+        await scriviCSV();
+    } catch (e) {
+        console.error("Errore salvataggio CSV:", e);
     }
 }
 
 async function caricaInventario() {
     if (!("showOpenFilePicker" in window)) {
-        caricaDaLocalStorage();
-        document.getElementById("dbStatus").style.display = "none";
+        inventario = [];
+        aggiornaBadgeDB("disconnected", null);
         return;
     }
 
     const handle = await caricaHandleDaIDB();
     if (!handle) {
-        caricaDaLocalStorage();
+        inventario = [];
         aggiornaBadgeDB("disconnected", null);
         return;
     }
@@ -343,7 +283,7 @@ async function caricaInventario() {
         aggiornaBadgeDB("connected", handle.name);
     } else {
         dbFileHandle = handle;
-        caricaDaLocalStorage();
+        inventario = [];
         aggiornaBadgeDB("pending", handle.name);
     }
 }
@@ -539,7 +479,6 @@ function aggiornaScontrino() {
     if (righe.length === 0) {
         scontrinoDiv.innerHTML = "<p>Scontrino vuoto.</p>";
         document.getElementById("totale").textContent = "0.00";
-        salvaScontrinoSuCookie();
         return;
     }
 
@@ -556,7 +495,6 @@ function aggiornaScontrino() {
     }).join("");
 
     document.getElementById("totale").textContent = formatEuro(totale);
-    salvaScontrinoSuCookie();
 }
 
 function azzeraScontrino() {
@@ -641,7 +579,6 @@ document.getElementById("emoji").addEventListener("keydown", function(event) {
 
 window.addEventListener("load", async function() {
     await caricaInventario();
-    caricaScontrinoDaCookie();
     aggiornaListaArticoli();
     aggiornaScontrino();
     inizializzaEmojiPicker();
