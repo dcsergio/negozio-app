@@ -19,6 +19,48 @@ const prodottiBase = [
 let inventario = [];
 let scontrino = {};
 
+const SCONTRINO_COOKIE = "negozio_scontrino";
+const SCONTRINO_COOKIE_MAX_AGE_SECONDS = 24 * 60 * 60;
+
+function salvaScontrinoSuCookie() {
+    const righe = Object.values(scontrino);
+
+    if (righe.length === 0) {
+        document.cookie = `${SCONTRINO_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
+        return;
+    }
+
+    const valore = encodeURIComponent(JSON.stringify(scontrino));
+    document.cookie = `${SCONTRINO_COOKIE}=${valore}; Max-Age=${SCONTRINO_COOKIE_MAX_AGE_SECONDS}; path=/; SameSite=Lax`;
+}
+
+function caricaScontrinoDaCookie() {
+    const prefisso = `${SCONTRINO_COOKIE}=`;
+    const cookie = document.cookie
+        .split(";")
+        .map(c => c.trim())
+        .find(c => c.startsWith(prefisso));
+
+    if (!cookie) {
+        return;
+    }
+
+    const valore = cookie.substring(prefisso.length);
+    if (!valore) {
+        return;
+    }
+
+    try {
+        const parsed = JSON.parse(decodeURIComponent(valore));
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+            scontrino = parsed;
+        }
+    } catch (error) {
+        console.warn("Cookie scontrino non valido:", error);
+        document.cookie = `${SCONTRINO_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`;
+    }
+}
+
 const emojiProdottiPerCategoria = [
     {
         categoria: "Frutta",
@@ -497,6 +539,7 @@ function aggiornaScontrino() {
     if (righe.length === 0) {
         scontrinoDiv.innerHTML = "<p>Scontrino vuoto.</p>";
         document.getElementById("totale").textContent = "0.00";
+        salvaScontrinoSuCookie();
         return;
     }
 
@@ -513,6 +556,7 @@ function aggiornaScontrino() {
     }).join("");
 
     document.getElementById("totale").textContent = formatEuro(totale);
+    salvaScontrinoSuCookie();
 }
 
 function azzeraScontrino() {
@@ -597,6 +641,7 @@ document.getElementById("emoji").addEventListener("keydown", function(event) {
 
 window.addEventListener("load", async function() {
     await caricaInventario();
+    caricaScontrinoDaCookie();
     aggiornaListaArticoli();
     aggiornaScontrino();
     inizializzaEmojiPicker();
