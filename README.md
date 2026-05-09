@@ -137,13 +137,13 @@ Passaggi:
 
 Note importanti:
 
-- La route / serve automaticamente negozio-app.html.
+- La route / serve automaticamente index.html.
 - Le chiamate frontend verso /api/* sono gia compatibili con Vercel.
 - In produzione Vercel non viene letto il file .env locale.
 
 ## Struttura progetto
 
-- negozio-app.html: interfaccia principale.
+- index.html: interfaccia principale.
 - negozio-app.css: stile UI.
 - negozio-app.js: logica inventario, cassa, QR, import CSV.
 - api/index.js: API serverless per Vercel.

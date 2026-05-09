@@ -185,7 +185,7 @@ app.delete("/api/inventario/:codice", async (req, res) => {
 });
 
 app.get("/", (_req, res) => {
-    res.sendFile(path.join(__dirname, "negozio-app.html"));
+    res.sendFile(path.join(__dirname, "index.html"));
 });
 
 function startServer(port, retries = 0) {
