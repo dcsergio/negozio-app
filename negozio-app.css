@@ -132,7 +132,7 @@ body {
     font-weight: 700;
     cursor: pointer;
     background: linear-gradient(120deg, #ff7a2f, #ff9f43);
-    color: #fff;
+    color: #1f1b2d;
     transition: opacity 0.15s, transform 0.15s;
 }
 
@@ -194,6 +194,104 @@ body {
     border: 1px solid #d8d8e3;
     padding: 10px;
     font-size: 0.95rem;
+}
+
+.form-actions {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+#fileImportCsv,
+#btnImportCsv {
+    border-radius: 10px;
+    border: 1px solid #d8d8e3;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+}
+
+#btnAggiungi,
+#btnImportCsv {
+    border: none;
+    border-radius: 10px;
+    width: auto;
+    min-width: 132px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f1720;
+    cursor: pointer;
+    background: linear-gradient(120deg, #2a9d8f, #4dbbad);
+    transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+#btnAggiungi:hover,
+#btnImportCsv:hover {
+    transform: translateY(-1px);
+    opacity: 0.92;
+}
+
+#fileImportCsv {
+    background: #f8f7fb;
+    color: #2b2734;
+    border-color: #cfc9dc;
+    cursor: pointer;
+}
+
+#fileImportCsv::file-selector-button {
+    margin-right: 10px;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(120deg, #f4a261, #f6be76);
+    color: #2a1f14;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+#fileImportCsv::-webkit-file-upload-button {
+    margin-right: 10px;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(120deg, #f4a261, #f6be76);
+    color: #2a1f14;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, filter 0.2s ease;
+}
+
+#fileImportCsv:hover::file-selector-button,
+#fileImportCsv:hover::-webkit-file-upload-button {
+    filter: brightness(1.05);
+}
+
+#fileImportCsv:active::file-selector-button,
+#fileImportCsv:active::-webkit-file-upload-button {
+    transform: translateY(1px);
+}
+
+#fileImportCsv:focus-visible {
+    outline: 3px solid #8bd6ca;
+    outline-offset: 1px;
+}
+
+#btnImportCsv {
+    background: linear-gradient(120deg, #2a9d8f, #4dbbad);
+}
+
+#btnImportCsv:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.import-hint {
+    margin: 8px 0 0;
+    font-size: 0.8rem;
+    color: #6a6575;
 }
 
 .emoji-field {
@@ -304,11 +402,7 @@ body {
 }
 
 #btnAggiungi {
-    grid-column: auto;
-    justify-self: start;
-    width: auto;
-    min-width: 132px;
-    background: linear-gradient(120deg, #ff7a2f, #ff9f43);
+    background: linear-gradient(120deg, #2a9d8f, #4dbbad);
 }
 
 .inventory-list {
@@ -469,10 +563,8 @@ body {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    #btnAggiungi {
-        grid-column: 1 / -1;
-        justify-self: stretch;
-        width: 100%;
+    .form-actions {
+        justify-content: flex-start;
     }
 
     .emoji-picker {

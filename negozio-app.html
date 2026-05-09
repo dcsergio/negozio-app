@@ -31,8 +31,14 @@
                         <button type="button" id="emojiToggle" class="emoji-toggle" aria-label="Scegli emoji">😀</button>
                         <div id="emojiPicker" class="emoji-picker" aria-label="Selettore emoji"></div>
                     </div>
-                    <button id="btnAggiungi" onclick="aggiungiArticolo()">➕ Aggiungi</button>
                 </div>
+
+                <div class="form-actions">
+                    <button id="btnAggiungi" onclick="aggiungiArticolo()">➕ Aggiungi</button>
+                    <input type="file" id="fileImportCsv" accept=".csv,text/csv" hidden>
+                    <button type="button" id="btnImportCsv" onclick="apriSelettoreImportCsv()">📥 Importa CSV</button>
+                </div>
+                <p class="import-hint">Formato CSV: codice,prezzo,descrizione,emoji (emoji opzionale)</p>
             </section>
 
             <section class="inventory-catalog">

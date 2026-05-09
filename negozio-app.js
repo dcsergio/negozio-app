@@ -198,6 +198,203 @@ function formatEuro(valore) {
     return Number(valore).toFixed(2);
 }
 
+function normalizzaNomeColonna(nome) {
+    return String(nome || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+    .replaceAll(/[\u0300-\u036f]/g, "");
+}
+
+function parseCsvLine(linea, separatore) {
+    const campi = [];
+    let corrente = "";
+    let dentroVirgolette = false;
+
+    for (let i = 0; i < linea.length; i += 1) {
+        const carattere = linea[i];
+        const prossimo = linea[i + 1];
+
+        if (carattere === '"') {
+            if (dentroVirgolette && prossimo === '"') {
+                corrente += '"';
+                i += 1;
+            } else {
+                dentroVirgolette = !dentroVirgolette;
+            }
+            continue;
+        }
+
+        if (carattere === separatore && !dentroVirgolette) {
+            campi.push(corrente.trim());
+            corrente = "";
+            continue;
+        }
+
+        corrente += carattere;
+    }
+
+    campi.push(corrente.trim());
+    return campi;
+}
+
+function convertiPrezzoCsv(valore) {
+    const pulito = String(valore || "")
+        .replaceAll(/\s+/g, "")
+        .replace("€", "")
+        .replace(",", ".");
+    return Number.parseFloat(pulito);
+}
+
+function rilevaSeparatoreCsv(riga) {
+    return (riga.match(/;/g) || []).length > (riga.match(/,/g) || []).length ? ";" : ",";
+}
+
+function estraiIndiciCsv(intestazioni) {
+    const mappeCampi = {
+        codice: ["codice", "code", "sku"],
+        prezzo: ["prezzo", "price", "costo"],
+        descrizione: ["descrizione", "description", "nome", "prodotto"],
+        emoji: ["emoji", "icona", "icon"]
+    };
+
+    return {
+        codice: intestazioni.findIndex(col => mappeCampi.codice.includes(col)),
+        prezzo: intestazioni.findIndex(col => mappeCampi.prezzo.includes(col)),
+        descrizione: intestazioni.findIndex(col => mappeCampi.descrizione.includes(col)),
+        emoji: intestazioni.findIndex(col => mappeCampi.emoji.includes(col))
+    };
+}
+
+function estraiValoreColonna(colonne, indice, fallback) {
+    if (indice >= 0) {
+        return colonne[indice];
+    }
+    return colonne[fallback];
+}
+
+function parseRigaProdottoCsv(colonne, numeroRiga, usaIntestazioni, indici) {
+    const codiceRaw = estraiValoreColonna(colonne, usaIntestazioni ? indici.codice : -1, 0);
+    const prezzoRaw = estraiValoreColonna(colonne, usaIntestazioni ? indici.prezzo : -1, 1);
+    const descrizioneRaw = estraiValoreColonna(colonne, usaIntestazioni ? indici.descrizione : -1, 2);
+    const emojiRaw = estraiValoreColonna(colonne, usaIntestazioni ? indici.emoji : -1, 3);
+
+    const codice = String(codiceRaw || "").trim().toUpperCase();
+    const prezzo = convertiPrezzoCsv(prezzoRaw);
+    const descrizione = String(descrizioneRaw || "").trim();
+    const emoji = String(emojiRaw || "").trim() || "🛒";
+
+    if (!codice && !descrizione && Number.isNaN(prezzo)) {
+        return null;
+    }
+
+    if (!codice || !descrizione || Number.isNaN(prezzo)) {
+        throw new Error(`Dati non validi alla riga ${numeroRiga}.`);
+    }
+
+    return { codice, prezzo, descrizione, emoji };
+}
+
+function parseProdottiDaCsv(testoCsv) {
+    const testo = String(testoCsv || "").replace(/^\uFEFF/, "");
+    const righe = testo
+        .split(/\r?\n/)
+        .map(riga => riga.trim())
+        .filter(Boolean);
+
+    if (righe.length === 0) {
+        throw new Error("Il file CSV è vuoto.");
+    }
+
+    const primaRiga = righe[0];
+    const separatore = rilevaSeparatoreCsv(primaRiga);
+    const intestazioni = parseCsvLine(primaRiga, separatore).map(normalizzaNomeColonna);
+
+    const indicePerCampo = estraiIndiciCsv(intestazioni);
+
+    const haIntestazioniValide = indicePerCampo.codice >= 0 && indicePerCampo.prezzo >= 0 && indicePerCampo.descrizione >= 0;
+    const rigaInizioDati = haIntestazioniValide ? 1 : 0;
+
+    const prodotti = [];
+    for (let i = rigaInizioDati; i < righe.length; i += 1) {
+        const numeroRiga = i + 1;
+        const colonne = parseCsvLine(righe[i], separatore);
+        const prodotto = parseRigaProdottoCsv(colonne, numeroRiga, haIntestazioniValide, indicePerCampo);
+        if (prodotto) {
+            prodotti.push(prodotto);
+        }
+    }
+
+    if (prodotti.length === 0) {
+        throw new Error("Nessun prodotto valido trovato nel CSV.");
+    }
+
+    const unici = new Map();
+    prodotti.forEach(prodotto => {
+        unici.set(prodotto.codice, prodotto);
+    });
+
+    return Array.from(unici.values());
+}
+
+function apriSelettoreImportCsv() {
+    const inputFile = document.getElementById("fileImportCsv");
+    if (!inputFile) {
+        return;
+    }
+
+    // Reset value so selecting the same file twice still triggers "change".
+    inputFile.value = "";
+    inputFile.click();
+}
+
+async function importaProdottiDaCsv(fileSelezionato) {
+    const inputFile = document.getElementById("fileImportCsv");
+    const bottone = document.getElementById("btnImportCsv");
+    const file = fileSelezionato || inputFile?.files?.[0];
+
+    if (!file) {
+        return;
+    }
+
+    bottone.disabled = true;
+    bottone.textContent = "⏳ Import in corso...";
+
+    try {
+        const contenutoCsv = await file.text();
+        const prodottiDaImportare = parseProdottiDaCsv(contenutoCsv);
+
+        const esistenti = new Set(inventario.map(a => a.codice));
+        let creati = 0;
+        let aggiornati = 0;
+
+        for (const prodotto of prodottiDaImportare) {
+            if (esistenti.has(prodotto.codice)) {
+                await aggiornaArticoloDB(prodotto.codice, {
+                    prezzo: prodotto.prezzo,
+                    descrizione: prodotto.descrizione,
+                    emoji: prodotto.emoji
+                });
+                aggiornati += 1;
+            } else {
+                await creaArticoloDB(prodotto);
+                esistenti.add(prodotto.codice);
+                creati += 1;
+            }
+        }
+
+        await caricaInventario();
+        aggiornaListaArticoli();
+        alert(`Import completato. Creati: ${creati}, aggiornati: ${aggiornati}.`);
+        inputFile.value = "";
+    } catch (e) {
+        alert(e.message || "Errore durante l'import CSV.");
+    } finally {
+        bottone.disabled = false;
+        bottone.textContent = "📥 Importa CSV";
+    }
+}
+
 function pulisciCampiInventario() {
     document.getElementById("codice").value = "";
     document.getElementById("prezzo").value = "";
@@ -465,6 +662,16 @@ document.getElementById("emoji").addEventListener("keydown", function(event) {
 });
 
 window.addEventListener("load", async function() {
+    const inputFileImport = document.getElementById("fileImportCsv");
+    if (inputFileImport) {
+        inputFileImport.addEventListener("change", function() {
+            const file = inputFileImport.files?.[0];
+            if (file) {
+                importaProdottiDaCsv(file);
+            }
+        });
+    }
+
     await caricaInventario();
     aggiornaListaArticoli();
     aggiornaScontrino();
