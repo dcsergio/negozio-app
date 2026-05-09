@@ -13,12 +13,21 @@
         <section class="panel" id="inventarioPanel">
             <h2>📦 Inventario</h2>
 
+            <div id="dbStatus" class="db-status db-disconnected">
+                <span id="dbStatusText">Nessun database CSV caricato</span>
+                <div class="db-buttons">
+                    <button class="db-btn db-btn-secondary" id="btnRiconnetti" onclick="riconnectiCSV()" style="display:none">🔗 Riconnetti</button>
+                    <button class="db-btn" id="btnApriCSV" onclick="apriFileCSV()">📂 Apri CSV</button>
+                    <button class="db-btn" id="btnCreaCSV" onclick="creaFileCSV()">✨ Crea CSV</button>
+                </div>
+            </div>
+
             <section class="inventory-create">
                 <h3 class="inventory-section-title">Nuovo articolo</h3>
                 <div class="form-grid">
                     <input type="text" id="codice" placeholder="Codice prodotto (es. A7K9M2B5)">
-                    <input type="number" step="0.01" id="prezzo" placeholder="Prezzo €">
                     <input type="text" id="descrizione" placeholder="Descrizione (es. Banana)">
+                    <input type="number" step="0.01" id="prezzo" placeholder="Prezzo €">
                     <div class="emoji-field">
                         <input type="text" id="emoji" placeholder="Emoji (es. 🍌)" maxlength="2" autocomplete="off">
                         <button type="button" id="emojiToggle" class="emoji-toggle" aria-label="Scegli emoji">😀</button>

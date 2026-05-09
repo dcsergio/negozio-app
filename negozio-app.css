@@ -71,6 +71,80 @@ body {
     font-size: 1.35rem;
 }
 
+.db-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid var(--line);
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 0.86rem;
+    flex-wrap: wrap;
+    background: #f8f8ff;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.db-status.db-connected {
+    background: #f0fff8;
+    border-color: #7dd8b5;
+}
+
+.db-status.db-pending {
+    background: #fffbf0;
+    border-color: #ffd166;
+}
+
+.db-status.db-disconnected {
+    background: #f8f8ff;
+    border-color: var(--line);
+}
+
+#dbStatusText {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #55526a;
+}
+
+.db-status.db-connected #dbStatusText {
+    color: #1d7a58;
+    font-weight: 700;
+}
+
+.db-status.db-pending #dbStatusText {
+    color: #9a6600;
+    font-weight: 700;
+}
+
+.db-buttons {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.db-btn {
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(120deg, #ff7a2f, #ff9f43);
+    color: #fff;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+.db-btn:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.db-btn.db-btn-secondary {
+    background: linear-gradient(120deg, #2a9d8f, #4dbbad);
+}
+
 .inventory-create,
 .inventory-catalog {
     background: #fffcf5;
