@@ -120,12 +120,35 @@ Nota: se un codice esiste gia, viene aggiornato; se non esiste, viene creato.
 - Assegna ruoli a turno: cassiere, cliente, controllo totale.
 - Aumenta difficolta gradualmente con piu articoli o prezzi decimali.
 
+## Deploy su Vercel
+
+Questa repository e configurata per Vercel con:
+
+- frontend statico servito da root progetto
+- API serverless in api/index.js
+- routing definito in vercel.json
+
+Passaggi:
+
+1. Importa la repo su Vercel.
+2. In Project Settings > Environment Variables, imposta almeno:
+   - DATABASE_URL=postgresql://user:password@host:5432/dbname
+3. Esegui il deploy.
+
+Note importanti:
+
+- La route / serve automaticamente negozio-app.html.
+- Le chiamate frontend verso /api/* sono gia compatibili con Vercel.
+- In produzione Vercel non viene letto il file .env locale.
+
 ## Struttura progetto
 
 - negozio-app.html: interfaccia principale.
 - negozio-app.css: stile UI.
 - negozio-app.js: logica inventario, cassa, QR, import CSV.
-- server.js: API e connessione PostgreSQL.
+- api/index.js: API serverless per Vercel.
+- server.js: server Express locale (sviluppo).
+- vercel.json: configurazione routing/build Vercel.
 - vendor/qrcode.min.js: libreria QR lato client.
 
 ## Licenza
