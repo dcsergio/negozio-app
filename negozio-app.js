@@ -18,6 +18,7 @@ const prodottiBase = [
 
 let inventario = [];
 let scontrino = {};
+let codiceInModifica = null;
 
 const emojiProdottiPerCategoria = [
     {
@@ -110,242 +111,88 @@ function generaQrLocali() {
     });
 }
 
-// === CSV Database ===
+// === PostgreSQL Database (via API backend) ===
 
-let dbFileHandle = null;
-
-const IDB_NAME = "negozio-app-db";
-const IDB_STORE = "file-handles";
-const IDB_KEY = "csv-handle";
-
-function apriIndexedDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open(IDB_NAME, 1);
-        req.onupgradeneeded = e => e.target.result.createObjectStore(IDB_STORE);
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
-
-async function salvaHandleInIDB(handle) {
-    try {
-        const db = await apriIndexedDB();
-        await new Promise((resolve, reject) => {
-            const tx = db.transaction(IDB_STORE, "readwrite");
-            tx.objectStore(IDB_STORE).put(handle, IDB_KEY);
-            tx.oncomplete = resolve;
-            tx.onerror = e => reject(e.target.error);
-        });
-    } catch (e) {
-        console.warn("Impossibile salvare handle in IndexedDB:", e);
-    }
-}
-
-async function caricaHandleDaIDB() {
-    try {
-        const db = await apriIndexedDB();
-        return await new Promise((resolve, reject) => {
-            const tx = db.transaction(IDB_STORE, "readonly");
-            const req = tx.objectStore(IDB_STORE).get(IDB_KEY);
-            req.onsuccess = e => resolve(e.target.result || null);
-            req.onerror = e => reject(e.target.error);
-        });
-    } catch (e) {
-        console.warn("Impossibile leggere handle da IndexedDB:", e);
-        return null;
-    }
-}
-
-function inventarioToCSV() {
-    const intestazione = "codice,prezzo,descrizione,emoji";
-    const righe = inventario.map(p => {
-        const desc = `"${String(p.descrizione || "").replace(/"/g, '""')}"`;
-        const em = `"${String(p.emoji || "").replace(/"/g, '""')}"`;
-        return [p.codice, p.prezzo, desc, em].join(",");
-    });
-    return [intestazione, ...righe].join("\r\n");
-}
-
-function parseCSVLine(line) {
-    const result = [];
-    let current = "";
-    let inQuotes = false;
-    for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-            if (inQuotes && line[i + 1] === '"') {
-                current += '"';
-                i++;
-            } else {
-                inQuotes = !inQuotes;
-            }
-        } else if (ch === "," && !inQuotes) {
-            result.push(current);
-            current = "";
-        } else {
-            current += ch;
-        }
-    }
-    result.push(current);
-    return result;
-}
-
-function csvToInventario(csv) {
-    const righe = csv.replace(/\r/g, "").split("\n").filter(r => r.trim() !== "");
-    if (righe.length < 2) return [];
-    return righe.slice(1).map(riga => {
-        const campi = parseCSVLine(riga);
-        if (campi.length < 3) return null;
-        const prezzo = parseFloat(campi[1]);
-        if (isNaN(prezzo)) return null;
-        return {
-            codice: campi[0].trim(),
-            prezzo,
-            descrizione: campi[2].trim(),
-            emoji: (campi[3] || "").trim() || "🛒"
-        };
-    }).filter(Boolean);
-}
-
-function aggiornaBadgeDB(stato, nomeFile) {
+function aggiornaBadgeDB(stato, dettaglio) {
     const statusDiv = document.getElementById("dbStatus");
     const statusText = document.getElementById("dbStatusText");
-    const btnRiconnetti = document.getElementById("btnRiconnetti");
-    const btnApriCSV = document.getElementById("btnApriCSV");
-    const btnCreaCSV = document.getElementById("btnCreaCSV");
-
     statusDiv.className = "db-status db-" + stato;
 
     if (stato === "connected") {
-        statusText.textContent = "✅ " + nomeFile;
-        btnRiconnetti.style.display = "none";
-        btnApriCSV.style.display = "";
-        btnCreaCSV.style.display = "";
-    } else if (stato === "pending") {
-        statusText.textContent = "⏳ Permesso richiesto: " + nomeFile;
-        btnRiconnetti.style.display = "";
-        btnApriCSV.style.display = "";
-        btnCreaCSV.style.display = "";
-    } else {
-        statusText.textContent = "Nessun database CSV caricato";
-        btnRiconnetti.style.display = "none";
-        btnApriCSV.style.display = "";
-        btnCreaCSV.style.display = "";
-    }
-}
-
-async function leggiDaCSV() {
-    if (!dbFileHandle) return;
-    const file = await dbFileHandle.getFile();
-    const testo = await file.text();
-    const letto = csvToInventario(testo);
-    inventario = letto;
-}
-
-async function scriviCSV() {
-    if (!dbFileHandle) return;
-    const writable = await dbFileHandle.createWritable();
-    await writable.write(inventarioToCSV());
-    await writable.close();
-}
-
-async function salvaInventario() {
-    if (!dbFileHandle) {
-        alert("Apri o crea un file CSV prima di salvare l'inventario.");
+        statusText.textContent = "✅ PostgreSQL connesso";
         return;
     }
 
-    try {
-        await scriviCSV();
-    } catch (e) {
-        console.error("Errore salvataggio CSV:", e);
+    if (stato === "pending") {
+        statusText.textContent = "⏳ Connessione a PostgreSQL...";
+        return;
     }
+
+    if (dettaglio) {
+        statusText.textContent = "❌ " + dettaglio;
+        return;
+    }
+
+    statusText.textContent = "Database PostgreSQL non connesso";
+}
+
+async function apiRequest(path, options = {}) {
+    const risposta = await fetch(path, {
+        headers: { "Content-Type": "application/json" },
+        ...options
+    });
+
+    if (!risposta.ok) {
+        let messaggio = "Errore API";
+        try {
+            const payload = await risposta.json();
+            messaggio = payload.message || messaggio;
+        } catch {
+            // Risposta senza body JSON.
+        }
+        throw new Error(messaggio);
+    }
+
+    if (risposta.status === 204) {
+        return null;
+    }
+
+    return risposta.json();
 }
 
 async function caricaInventario() {
-    if (!("showOpenFilePicker" in window)) {
-        inventario = [];
-        aggiornaBadgeDB("disconnected", null);
-        return;
-    }
-
-    const handle = await caricaHandleDaIDB();
-    if (!handle) {
-        inventario = [];
-        aggiornaBadgeDB("disconnected", null);
-        return;
-    }
-
-    const permesso = await handle.queryPermission({ mode: "readwrite" });
-    if (permesso === "granted") {
-        dbFileHandle = handle;
-        await leggiDaCSV();
-        aggiornaBadgeDB("connected", handle.name);
-    } else {
-        dbFileHandle = handle;
-        inventario = [];
-        aggiornaBadgeDB("pending", handle.name);
-    }
-}
-
-async function apriFileCSV() {
-    if (!("showOpenFilePicker" in window)) {
-        alert("Il tuo browser non supporta la File System Access API. Usa Chrome o Edge.");
-        return;
-    }
+    aggiornaBadgeDB("pending");
     try {
-        const [handle] = await window.showOpenFilePicker({
-            types: [{ description: "File CSV", accept: { "text/csv": [".csv"] } }],
-            multiple: false
-        });
-        dbFileHandle = handle;
-        await salvaHandleInIDB(handle);
-        await leggiDaCSV();
-        aggiornaListaArticoli();
-        aggiornaBadgeDB("connected", handle.name);
+        inventario = await apiRequest("/api/inventario", { method: "GET" });
+        aggiornaBadgeDB("connected");
     } catch (e) {
-        if (e.name !== "AbortError") {
-            console.error("Errore apertura file CSV:", e);
-        }
+        console.error("Errore caricamento inventario:", e);
+        inventario = [];
+        aggiornaBadgeDB("disconnected", e.message);
     }
 }
 
-async function creaFileCSV() {
-    if (!("showSaveFilePicker" in window)) {
-        alert("Il tuo browser non supporta la File System Access API. Usa Chrome o Edge.");
-        return;
-    }
-    try {
-        const handle = await window.showSaveFilePicker({
-            suggestedName: "inventario.csv",
-            types: [{ description: "File CSV", accept: { "text/csv": [".csv"] } }]
-        });
-        dbFileHandle = handle;
-        await salvaHandleInIDB(handle);
-        await scriviCSV();
-        aggiornaBadgeDB("connected", handle.name);
-    } catch (e) {
-        if (e.name !== "AbortError") {
-            console.error("Errore creazione file CSV:", e);
-        }
-    }
+async function creaArticoloDB(articolo) {
+    await apiRequest("/api/inventario", {
+        method: "POST",
+        body: JSON.stringify(articolo)
+    });
 }
 
-async function riconnectiCSV() {
-    if (!dbFileHandle) return;
-    try {
-        const permesso = await dbFileHandle.requestPermission({ mode: "readwrite" });
-        if (permesso === "granted") {
-            await leggiDaCSV();
-            aggiornaListaArticoli();
-            aggiornaBadgeDB("connected", dbFileHandle.name);
-        }
-    } catch (e) {
-        console.error("Errore riconnessione CSV:", e);
-    }
+async function aggiornaArticoloDB(codice, articolo) {
+    await apiRequest(`/api/inventario/${encodeURIComponent(codice)}`, {
+        method: "PUT",
+        body: JSON.stringify(articolo)
+    });
 }
 
-// === Fine CSV Database ===
+async function eliminaArticoloDB(codice) {
+    await apiRequest(`/api/inventario/${encodeURIComponent(codice)}`, {
+        method: "DELETE"
+    });
+}
+
+// === Fine PostgreSQL Database ===
 
 function formatEuro(valore) {
     return Number(valore).toFixed(2);
@@ -356,6 +203,11 @@ function pulisciCampiInventario() {
     document.getElementById("prezzo").value = "";
     document.getElementById("descrizione").value = "";
     document.getElementById("emoji").value = "";
+}
+
+function resetModificaArticolo() {
+    codiceInModifica = null;
+    document.getElementById("btnAggiungi").textContent = "➕ Aggiungi";
 }
 
 function generaCodiceUnico() {
@@ -383,17 +235,40 @@ async function aggiungiArticolo() {
         return;
     }
 
-    if (inventario.some(a => a.codice === codice)) {
+    const esisteInLista = inventario.some(a => a.codice === codice);
+    const inModifica = codiceInModifica !== null;
+    if (inModifica === false && esisteInLista) {
         alert("Codice già presente in inventario.");
         document.getElementById("codice").focus();
         return;
     }
 
-    inventario.push({ codice, prezzo, descrizione, emoji });
-    await salvaInventario();
-    aggiornaListaArticoli();
-    pulisciCampiInventario();
-    document.getElementById("codice").focus();
+    try {
+        if (inModifica) {
+            if (codice === codiceInModifica) {
+                await aggiornaArticoloDB(codiceInModifica, { prezzo, descrizione, emoji });
+            } else {
+                if (esisteInLista) {
+                    alert("Codice già presente in inventario.");
+                    document.getElementById("codice").focus();
+                    return;
+                }
+
+                await eliminaArticoloDB(codiceInModifica);
+                await creaArticoloDB({ codice, prezzo, descrizione, emoji });
+            }
+        } else {
+            await creaArticoloDB({ codice, prezzo, descrizione, emoji });
+        }
+
+        await caricaInventario();
+        aggiornaListaArticoli();
+        pulisciCampiInventario();
+        resetModificaArticolo();
+        document.getElementById("codice").focus();
+    } catch (e) {
+        alert(e.message || "Errore durante il salvataggio.");
+    }
 }
 
 async function modificaArticolo(index) {
@@ -402,16 +277,28 @@ async function modificaArticolo(index) {
     document.getElementById("prezzo").value = articolo.prezzo;
     document.getElementById("descrizione").value = articolo.descrizione;
     document.getElementById("emoji").value = articolo.emoji || "";
-    inventario.splice(index, 1);
-    await salvaInventario();
-    aggiornaListaArticoli();
+    codiceInModifica = articolo.codice;
+    document.getElementById("btnAggiungi").textContent = "💾 Salva modifica";
     document.getElementById("codice").focus();
 }
 
 async function cancellaArticolo(index) {
-    inventario.splice(index, 1);
-    await salvaInventario();
-    aggiornaListaArticoli();
+    const articolo = inventario[index];
+    if (!articolo) {
+        return;
+    }
+
+    try {
+        await eliminaArticoloDB(articolo.codice);
+        if (codiceInModifica === articolo.codice) {
+            pulisciCampiInventario();
+            resetModificaArticolo();
+        }
+        await caricaInventario();
+        aggiornaListaArticoli();
+    } catch (e) {
+        alert(e.message || "Errore durante la cancellazione.");
+    }
 }
 
 function inviaCodiceInCassa(codice) {

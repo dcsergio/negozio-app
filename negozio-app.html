@@ -14,11 +14,9 @@
             <h2>📦 Inventario</h2>
 
             <div id="dbStatus" class="db-status db-disconnected">
-                <span id="dbStatusText">Nessun database CSV caricato</span>
+                <span id="dbStatusText">Database PostgreSQL non connesso</span>
                 <div class="db-buttons">
-                    <button class="db-btn db-btn-secondary" id="btnRiconnetti" onclick="riconnectiCSV()" style="display:none">🔗 Riconnetti</button>
-                    <button class="db-btn" id="btnApriCSV" onclick="apriFileCSV()">📂 Apri CSV</button>
-                    <button class="db-btn" id="btnCreaCSV" onclick="creaFileCSV()">✨ Crea CSV</button>
+                    <button class="db-btn" id="btnRicaricaDB" onclick="caricaInventario()">🔄 Ricarica</button>
                 </div>
             </div>
 
