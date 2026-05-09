@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Supermercato</title>
+    <link rel="stylesheet" href="negozio-app.css">
+</head>
+<body>
+    <h1 class="page-title">🛍️ Mini Supermercato</h1>
+
+    <main class="layout">
+        <section class="panel" id="inventarioPanel">
+            <h2>📦 Inventario</h2>
+
+            <section class="inventory-create">
+                <h3 class="inventory-section-title">Nuovo articolo</h3>
+                <div class="form-grid">
+                    <input type="text" id="codice" placeholder="Codice prodotto (es. A7K9M2B5)">
+                    <input type="number" step="0.01" id="prezzo" placeholder="Prezzo €">
+                    <input type="text" id="descrizione" placeholder="Descrizione (es. Banana)">
+                    <div class="emoji-field">
+                        <input type="text" id="emoji" placeholder="Emoji (es. 🍌)" maxlength="2" autocomplete="off">
+                        <button type="button" id="emojiToggle" class="emoji-toggle" aria-label="Scegli emoji">😀</button>
+                        <div id="emojiPicker" class="emoji-picker" aria-label="Selettore emoji"></div>
+                    </div>
+                    <button id="btnAggiungi" onclick="aggiungiArticolo()">➕ Aggiungi</button>
+                </div>
+            </section>
+
+            <section class="inventory-catalog">
+                <h3 class="inventory-section-title">Prodotti in inventario</h3>
+                <div id="listaArticoli" class="inventory-list"></div>
+            </section>
+        </section>
+
+        <section class="panel" id="cassaPanel">
+            <h2>🧾 Cassa</h2>
+
+            <div class="cash-controls">
+                <input type="text" id="codiceCassa" placeholder="Scansiona o scrivi il codice qui">
+                <button id="btnAzzera" onclick="azzeraScontrino()">🗑️ Azzera scontrino</button>
+            </div>
+
+            <div id="scontrino"></div>
+            <div class="total">Totale: €<span id="totale">0.00</span></div>
+            <p class="hint">Suggerimento: dalla lista inventario puoi premere "Aggiungi" per inviare il codice in cassa.</p>
+        </section>
+    </main>
+
+    <script src="vendor/qrcode.min.js"></script>
+    <script src="negozio-app.js"></script>
+</body>
+</html>
