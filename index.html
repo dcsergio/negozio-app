@@ -61,6 +61,20 @@
         </section>
     </main>
 
+    <div id="popupContainer" class="popup-container" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="confirmModal" class="confirm-modal" aria-hidden="true">
+        <div class="confirm-modal-backdrop" data-modal-close="true"></div>
+        <dialog class="confirm-modal-card" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage">
+            <h3 id="confirmModalTitle" class="confirm-modal-title">Conferma azione</h3>
+            <p id="confirmModalMessage" class="confirm-modal-message">Sei sicuro di voler procedere?</p>
+            <div class="confirm-modal-actions">
+                <button type="button" id="confirmModalCancel" class="confirm-btn confirm-btn-cancel">Annulla</button>
+                <button type="button" id="confirmModalConfirm" class="confirm-btn confirm-btn-danger">Conferma</button>
+            </div>
+        </dialog>
+    </div>
+
     <script src="vendor/qrcode.min.js"></script>
     <script src="negozio-app.js"></script>
 </body>

@@ -19,6 +19,134 @@ const prodottiBase = [
 let inventario = [];
 let scontrino = {};
 let codiceInModifica = null;
+let popupTimerId = 0;
+let resolverConferma = null;
+
+function rispondiConfermaModal(esito) {
+    if (resolverConferma) {
+        resolverConferma(esito);
+        resolverConferma = null;
+    }
+}
+
+function mostraPopup(messaggio, tipo = "warning", durata = 3600) {
+    const contenitore = document.getElementById("popupContainer");
+    if (!contenitore) {
+        return;
+    }
+
+    const icone = {
+        success: "✅",
+        warning: "⚠️",
+        error: "❌"
+    };
+    const tipoNotifica = icone[tipo] ? tipo : "warning";
+    const id = `popup-${popupTimerId}`;
+    popupTimerId += 1;
+
+    const popup = document.createElement("div");
+    popup.className = `popup popup-${tipoNotifica}`;
+    popup.dataset.popupId = id;
+    popup.setAttribute("role", tipoNotifica === "error" ? "alert" : "status");
+    popup.innerHTML = `
+        <span class="popup-icon" aria-hidden="true">${icone[tipoNotifica]}</span>
+        <span class="popup-message">${messaggio}</span>
+        <button type="button" class="popup-close" aria-label="Chiudi notifica">✕</button>
+    `;
+
+    function chiudiPopup() {
+        popup.classList.remove("show");
+        globalThis.setTimeout(function() {
+            popup.remove();
+        }, 190);
+    }
+
+    popup.querySelector(".popup-close")?.addEventListener("click", chiudiPopup);
+
+    contenitore.appendChild(popup);
+    globalThis.requestAnimationFrame(function() {
+        popup.classList.add("show");
+    });
+
+    if (contenitore.children.length > 4) {
+        contenitore.firstElementChild?.remove();
+    }
+
+    globalThis.setTimeout(chiudiPopup, durata);
+}
+
+function inizializzaModalConferma() {
+    const modal = document.getElementById("confirmModal");
+    const card = modal?.querySelector(".confirm-modal-card");
+    const btnAnnulla = document.getElementById("confirmModalCancel");
+    const btnConferma = document.getElementById("confirmModalConfirm");
+
+    if (!modal || !card || !btnAnnulla || !btnConferma) {
+        return;
+    }
+
+    btnAnnulla.addEventListener("click", function() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        card.removeAttribute("open");
+        rispondiConfermaModal(false);
+    });
+
+    btnConferma.addEventListener("click", function() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        card.removeAttribute("open");
+        rispondiConfermaModal(true);
+    });
+
+    modal.addEventListener("click", function(event) {
+        const chiusura = event.target.closest("[data-modal-close='true']");
+        if (!chiusura) {
+            return;
+        }
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        card.removeAttribute("open");
+        rispondiConfermaModal(false);
+    });
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && modal.classList.contains("open")) {
+            modal.classList.remove("open");
+            modal.setAttribute("aria-hidden", "true");
+            card.removeAttribute("open");
+            rispondiConfermaModal(false);
+        }
+    });
+}
+
+function mostraConferma({ titolo, messaggio, etichettaConferma = "Conferma", variante = "danger" }) {
+    const modal = document.getElementById("confirmModal");
+    const card = modal?.querySelector(".confirm-modal-card");
+    const titoloNodo = document.getElementById("confirmModalTitle");
+    const messaggioNodo = document.getElementById("confirmModalMessage");
+    const btnConferma = document.getElementById("confirmModalConfirm");
+    const btnAnnulla = document.getElementById("confirmModalCancel");
+
+    if (!modal || !card || !titoloNodo || !messaggioNodo || !btnConferma || !btnAnnulla) {
+        return Promise.resolve(false);
+    }
+
+    titoloNodo.textContent = titolo || "Conferma azione";
+    messaggioNodo.textContent = messaggio || "Sei sicuro di voler procedere?";
+    btnConferma.textContent = etichettaConferma;
+    btnConferma.classList.remove("confirm-btn-danger", "confirm-btn-safe");
+    btnConferma.classList.add(variante === "safe" ? "confirm-btn-safe" : "confirm-btn-danger");
+
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    card.setAttribute("open", "");
+    btnAnnulla.focus();
+
+    return new Promise(function(resolve) {
+        resolverConferma = resolve;
+    });
+}
 
 const emojiProdottiPerCategoria = [
     {
@@ -385,10 +513,10 @@ async function importaProdottiDaCsv(fileSelezionato) {
 
         await caricaInventario();
         aggiornaListaArticoli();
-        alert(`Import completato. Creati: ${creati}, aggiornati: ${aggiornati}.`);
+        mostraPopup(`Import completato. Creati: ${creati}, aggiornati: ${aggiornati}.`, "success");
         inputFile.value = "";
     } catch (e) {
-        alert(e.message || "Errore durante l'import CSV.");
+        mostraPopup(e.message || "Errore durante l'import CSV.", "error");
     } finally {
         bottone.disabled = false;
         bottone.textContent = "📥 Importa CSV";
@@ -428,14 +556,14 @@ async function aggiungiArticolo() {
     }
 
     if (!codice || Number.isNaN(prezzo) || !descrizione) {
-        alert("Inserisci codice, prezzo e descrizione.");
+        mostraPopup("Inserisci codice, prezzo e descrizione.", "warning");
         return;
     }
 
     const esisteInLista = inventario.some(a => a.codice === codice);
     const inModifica = codiceInModifica !== null;
     if (inModifica === false && esisteInLista) {
-        alert("Codice già presente in inventario.");
+        mostraPopup("Codice già presente in inventario.", "warning");
         document.getElementById("codice").focus();
         return;
     }
@@ -444,18 +572,21 @@ async function aggiungiArticolo() {
         if (inModifica) {
             if (codice === codiceInModifica) {
                 await aggiornaArticoloDB(codiceInModifica, { prezzo, descrizione, emoji });
+                mostraPopup("Articolo aggiornato con successo.", "success");
             } else {
                 if (esisteInLista) {
-                    alert("Codice già presente in inventario.");
+                    mostraPopup("Codice già presente in inventario.", "warning");
                     document.getElementById("codice").focus();
                     return;
                 }
 
                 await eliminaArticoloDB(codiceInModifica);
                 await creaArticoloDB({ codice, prezzo, descrizione, emoji });
+                mostraPopup("Articolo aggiornato con nuovo codice.", "success");
             }
         } else {
             await creaArticoloDB({ codice, prezzo, descrizione, emoji });
+            mostraPopup("Articolo aggiunto con successo.", "success");
         }
 
         await caricaInventario();
@@ -464,7 +595,7 @@ async function aggiungiArticolo() {
         resetModificaArticolo();
         document.getElementById("codice").focus();
     } catch (e) {
-        alert(e.message || "Errore durante il salvataggio.");
+        mostraPopup(e.message || "Errore durante il salvataggio.", "error");
     }
 }
 
@@ -485,6 +616,17 @@ async function cancellaArticolo(index) {
         return;
     }
 
+    const confermato = await mostraConferma({
+        titolo: "Conferma eliminazione",
+        messaggio: `Vuoi eliminare "${articolo.descrizione}" (${articolo.codice}) dall'inventario?`,
+        etichettaConferma: "Elimina",
+        variante: "danger"
+    });
+
+    if (!confermato) {
+        return;
+    }
+
     try {
         await eliminaArticoloDB(articolo.codice);
         if (codiceInModifica === articolo.codice) {
@@ -493,8 +635,9 @@ async function cancellaArticolo(index) {
         }
         await caricaInventario();
         aggiornaListaArticoli();
+        mostraPopup("Articolo eliminato.", "success");
     } catch (e) {
-        alert(e.message || "Errore durante la cancellazione.");
+        mostraPopup(e.message || "Errore durante la cancellazione.", "error");
     }
 }
 
@@ -540,7 +683,7 @@ function aggiungiAlloScontrino() {
 
     const articolo = inventario.find(a => a.codice === codice);
     if (!articolo) {
-        alert("Codice non trovato in inventario.");
+        mostraPopup("Codice non trovato in inventario.", "warning");
         document.getElementById("codiceCassa").focus();
         return;
     }
@@ -604,9 +747,28 @@ function aggiornaScontrino() {
     document.getElementById("totale").textContent = formatEuro(totale);
 }
 
-function azzeraScontrino() {
+async function azzeraScontrino() {
+    if (Object.keys(scontrino).length === 0) {
+        mostraPopup("Lo scontrino è già vuoto.", "warning");
+        document.getElementById("codiceCassa").focus();
+        return;
+    }
+
+    const confermato = await mostraConferma({
+        titolo: "Azzera scontrino",
+        messaggio: "Questa azione rimuoverà tutti gli articoli dallo scontrino corrente.",
+        etichettaConferma: "Azzera",
+        variante: "danger"
+    });
+
+    if (!confermato) {
+        document.getElementById("codiceCassa").focus();
+        return;
+    }
+
     scontrino = {};
     aggiornaScontrino();
+    mostraPopup("Scontrino azzerato.", "success");
     document.getElementById("codiceCassa").focus();
 }
 
@@ -698,6 +860,7 @@ window.addEventListener("load", async function() {
     await caricaInventario();
     aggiornaListaArticoli();
     aggiornaScontrino();
+    inizializzaModalConferma();
     inizializzaEmojiPicker();
     document.getElementById("codiceCassa").focus();
 });
