@@ -592,10 +592,10 @@ function aggiornaScontrino() {
             <div class="rice-item">
                 <span class="rice-item-label">${articolo.emoji || "🛒"} ${articolo.descrizione}</span>
                 <div class="rice-item-controls">
+                    <strong class="rice-item-price">€${formatEuro(subtotale)}</strong>
                     <button class="qty-btn qty-minus" onclick="riduciQuantita('${articolo.codice}')" title="Riduci quantità">−</button>
                     <span class="qty-value">${articolo.quantita}</span>
                     <button class="qty-btn qty-plus" onclick="aumentaQuantita('${articolo.codice}')" title="Aumenta quantità">+</button>
-                    <strong class="rice-item-price">€${formatEuro(subtotale)}</strong>
                 </div>
             </div>
         `;
