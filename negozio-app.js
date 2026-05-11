@@ -556,6 +556,24 @@ function aggiungiAlloScontrino() {
     document.getElementById("codiceCassa").focus();
 }
 
+function aumentaQuantita(codice) {
+    if (scontrino[codice]) {
+        scontrino[codice].quantita += 1;
+        aggiornaScontrino();
+    }
+}
+
+function riduciQuantita(codice) {
+    if (!scontrino[codice]) {
+        return;
+    }
+    scontrino[codice].quantita -= 1;
+    if (scontrino[codice].quantita <= 0) {
+        delete scontrino[codice];
+    }
+    aggiornaScontrino();
+}
+
 function aggiornaScontrino() {
     const scontrinoDiv = document.getElementById("scontrino");
     const righe = Object.values(scontrino);
@@ -572,8 +590,13 @@ function aggiornaScontrino() {
         totale += subtotale;
         return `
             <div class="rice-item">
-                <span>${articolo.emoji || "🛒"} ${articolo.quantita} x ${articolo.descrizione}</span>
-                <strong>€${formatEuro(subtotale)}</strong>
+                <span class="rice-item-label">${articolo.emoji || "🛒"} ${articolo.descrizione}</span>
+                <div class="rice-item-controls">
+                    <button class="qty-btn qty-minus" onclick="riduciQuantita('${articolo.codice}')" title="Riduci quantità">−</button>
+                    <span class="qty-value">${articolo.quantita}</span>
+                    <button class="qty-btn qty-plus" onclick="aumentaQuantita('${articolo.codice}')" title="Aumenta quantità">+</button>
+                    <strong class="rice-item-price">€${formatEuro(subtotale)}</strong>
+                </div>
             </div>
         `;
     }).join("");
