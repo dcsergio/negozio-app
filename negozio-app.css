@@ -11,10 +11,57 @@
 }
 
 * {
-    /* Ensure SVG emoji images align with text */
-    vertical-align: middle;
-    }
     box-sizing: border-box;
+}
+
+.emoji-img {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.16em;
+    object-fit: contain;
+}
+
+.popup-emoji,
+.status-emoji,
+.item-emoji,
+.rice-emoji,
+.picker-emoji {
+    width: 1.08em;
+    height: 1.08em;
+}
+
+.rice-emoji {
+    width: 1.36em;
+    height: 1.36em;
+    vertical-align: -0.22em;
+    margin-right: 0.2em;
+}
+
+#btnAddItem .emoji-img,
+#btnImportCsv .emoji-img {
+    width: 1.28em;
+    height: 1.28em;
+    vertical-align: -0.2em;
+    margin-right: 0.3em;
+}
+
+.emoji-toggle .emoji-img {
+    width: 1.7em;
+    height: 1.7em;
+    vertical-align: middle;
+}
+
+.emoji-option .emoji-img {
+    width: 1.95em;
+    height: 1.95em;
+    vertical-align: middle;
+}
+
+#btnClearReceipt .emoji-img {
+    width: 1.45em;
+    height: 1.45em;
+    vertical-align: -0.22em;
+    margin-right: 0.3em;
 }
 
 body {
@@ -29,11 +76,45 @@ body {
     padding: 18px;
 }
 
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
 .page-title {
-    margin: 0 0 14px;
-    text-align: center;
+    margin: 0;
     font-size: clamp(1.6rem, 2.8vw, 2.4rem);
     letter-spacing: 0.03em;
+}
+
+.language-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ddd7eb;
+    border-radius: 999px;
+    padding: 4px;
+}
+
+.lang-btn {
+    border: none;
+    background: transparent;
+    color: #5a5568;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    border-radius: 999px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.lang-btn.active {
+    background: linear-gradient(120deg, #2a9d8f, #4dbbad);
+    color: #0f1720;
 }
 
 .subtitle {
@@ -50,13 +131,13 @@ body {
     align-items: start;
 }
 
-#inventarioPanel {
+#inventoryPanel {
     grid-column: span 3;
     display: grid;
     gap: 12px;
 }
 
-#cassaPanel {
+#checkoutPanel {
     grid-column: span 1;
     align-self: stretch;
 }
@@ -72,6 +153,14 @@ body {
 .panel h2 {
     margin: 0 0 12px;
     font-size: 1.35rem;
+}
+
+#inventoryPanel > h2 .emoji-img,
+#checkoutPanel > h2 .emoji-img {
+    width: 1.45em;
+    height: 1.45em;
+    vertical-align: -0.22em;
+    margin-right: 0.24em;
 }
 
 .db-status {
@@ -175,23 +264,23 @@ body {
     gap: 8px;
 }
 
-#inventarioPanel .form-grid {
+#inventoryPanel .form-grid {
     grid-template-columns: repeat(4, minmax(150px, 220px));
     gap: 10px 12px;
     justify-content: start;
     align-items: end;
 }
 
-#inventarioPanel .form-grid input,
-#inventarioPanel .form-grid button {
+#inventoryPanel .form-grid input,
+#inventoryPanel .form-grid button {
     padding: 8px 10px;
     font-size: 0.9rem;
 }
 
 .form-grid input,
 .form-grid button,
-#codiceCassa,
-#btnAzzera {
+#checkoutCode,
+#btnClearReceipt {
     width: 100%;
     border-radius: 10px;
     border: 1px solid #d8d8e3;
@@ -207,7 +296,7 @@ body {
     align-items: center;
 }
 
-#fileImportCsv,
+#csvImportFile,
 #btnImportCsv {
     border-radius: 10px;
     border: 1px solid #d8d8e3;
@@ -215,7 +304,7 @@ body {
     font-size: 0.9rem;
 }
 
-#btnAggiungi,
+#btnAddItem,
 #btnImportCsv {
     border: none;
     border-radius: 10px;
@@ -230,20 +319,20 @@ body {
     transition: transform 0.16s ease, opacity 0.16s ease;
 }
 
-#btnAggiungi:hover,
+#btnAddItem:hover,
 #btnImportCsv:hover {
     transform: translateY(-1px);
     opacity: 0.92;
 }
 
-#fileImportCsv {
+#csvImportFile {
     background: #f8f7fb;
     color: #2b2734;
     border-color: #cfc9dc;
     cursor: pointer;
 }
 
-#fileImportCsv::file-selector-button {
+#csvImportFile::file-selector-button {
     margin-right: 10px;
     border: none;
     border-radius: 8px;
@@ -255,7 +344,7 @@ body {
     transition: transform 0.15s ease, filter 0.2s ease;
 }
 
-#fileImportCsv::-webkit-file-upload-button {
+#csvImportFile::-webkit-file-upload-button {
     margin-right: 10px;
     border: none;
     border-radius: 8px;
@@ -267,17 +356,17 @@ body {
     transition: transform 0.15s ease, filter 0.2s ease;
 }
 
-#fileImportCsv:hover::file-selector-button,
-#fileImportCsv:hover::-webkit-file-upload-button {
+#csvImportFile:hover::file-selector-button,
+#csvImportFile:hover::-webkit-file-upload-button {
     filter: brightness(1.05);
 }
 
-#fileImportCsv:active::file-selector-button,
-#fileImportCsv:active::-webkit-file-upload-button {
+#csvImportFile:active::file-selector-button,
+#csvImportFile:active::-webkit-file-upload-button {
     transform: translateY(1px);
 }
 
-#fileImportCsv:focus-visible {
+#csvImportFile:focus-visible {
     outline: 3px solid #8bd6ca;
     outline-offset: 1px;
 }
@@ -304,7 +393,7 @@ body {
     min-width: 0;
 }
 
-#inventarioPanel .emoji-field {
+#inventoryPanel .emoji-field {
     width: 100%;
     max-width: 220px;
 }
@@ -325,6 +414,9 @@ body {
     background: #fff7e8;
     cursor: pointer;
     font-size: 1.1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .form-grid .emoji-toggle {
@@ -369,17 +461,21 @@ body {
 
 .emoji-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
 }
 
 .emoji-option {
     border: 1px solid #ececf3;
     background: #fff;
     border-radius: 8px;
-    padding: 6px 0;
+    padding: 8px 0;
     font-size: 1.3rem;
     cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
 }
 
 .emoji-option:hover {
@@ -388,7 +484,7 @@ body {
 }
 
 .form-grid button,
-#btnAzzera,
+#btnClearReceipt,
 .mini-btn {
     border: none;
     color: #fff;
@@ -398,13 +494,13 @@ body {
 }
 
 .form-grid button:hover,
-#btnAzzera:hover,
+#btnClearReceipt:hover,
 .mini-btn:hover {
     transform: translateY(-1px);
     opacity: 0.92;
 }
 
-#btnAggiungi {
+#btnAddItem {
     background: linear-gradient(120deg, #2a9d8f, #4dbbad);
 }
 
@@ -510,7 +606,7 @@ body {
     margin-bottom: 12px;
 }
 
-#btnAzzera {
+#btnClearReceipt {
     background: linear-gradient(120deg, #e63946, #f46065);
 }
 
@@ -540,6 +636,9 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
 }
 
 .rice-item-controls {
@@ -768,12 +867,26 @@ body {
 }
 
 @media (max-width: 960px) {
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+        margin-bottom: 12px;
+    }
+
+    .page-title {
+        text-align: center;
+    }
+
+    .language-switch {
+        align-self: center;
+    }
+
     .layout {
         grid-template-columns: 1fr;
     }
 
-    #inventarioPanel,
-    #cassaPanel {
+    #inventoryPanel,
+    #checkoutPanel {
         grid-column: span 1;
     }
 
@@ -782,7 +895,7 @@ body {
         max-height: none;
     }
 
-    #inventarioPanel .form-grid {
+    #inventoryPanel .form-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -800,7 +913,7 @@ body {
 }
 
 @media (max-width: 620px) {
-    #inventarioPanel .form-grid {
+    #inventoryPanel .form-grid {
         grid-template-columns: 1fr;
     }
 }

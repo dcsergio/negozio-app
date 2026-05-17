@@ -1,0 +1,220 @@
+{
+  "it": {
+    "app": {
+      "title": "Mini Supermercato"
+    },
+    "inventory": {
+      "title": "Magazzino",
+      "newItem": "Nuovo articolo",
+      "csvHint": "Formato CSV: codice,prezzo,descrizione,emoji (emoji opzionale)",
+      "itemsInInventory": "Prodotti in inventario",
+      "empty": "Nessun prodotto disponibile.",
+      "code": "Codice",
+      "qrUnavailable": "QR non disponibile",
+      "emojiSelector": "Selettore emoji"
+    },
+    "checkout": {
+      "title": "Scontrino",
+      "total": "Totale",
+      "hint": "Suggerimento: dalla lista inventario puoi premere \"Aggiungi\" per inviare il codice nello scontrino.",
+      "empty": "Scontrino vuoto."
+    },
+    "db": {
+      "connected": "PostgreSQL connesso",
+      "connecting": "Connessione a PostgreSQL...",
+      "disconnected": "Database PostgreSQL non connesso"
+    },
+    "actions": {
+      "reload": "Ricarica",
+      "chooseEmoji": "Scegli emoji",
+      "add": "Aggiungi",
+      "importCsv": "Importa CSV",
+      "importing": "Import in corso...",
+      "clearReceipt": "Azzera scontrino",
+      "cancel": "Annulla",
+      "confirm": "Conferma",
+      "edit": "Modifica",
+      "delete": "Elimina",
+      "saveChanges": "Salva modifica",
+      "clear": "Azzera",
+      "decreaseQuantity": "Riduci quantita",
+      "increaseQuantity": "Aumenta quantita",
+      "chooseIcon": "Seleziona icona"
+    },
+    "messages": {
+      "importCompleted": "Import completato. Creati: {created}, aggiornati: {updated}.",
+      "itemUpdated": "Articolo aggiornato con successo.",
+      "itemUpdatedWithNewCode": "Articolo aggiornato con nuovo codice.",
+      "itemAdded": "Articolo aggiunto con successo.",
+      "itemDeleted": "Articolo eliminato.",
+      "receiptAlreadyEmpty": "Lo scontrino e gia vuoto.",
+      "receiptCleared": "Scontrino azzerato."
+    },
+    "errors": {
+      "apiError": "Errore API",
+      "invalidCsvRow": "Dati non validi alla riga {row}.",
+      "emptyCsv": "Il file CSV e vuoto.",
+      "noValidCsvItems": "Nessun prodotto valido trovato nel CSV.",
+      "importCsv": "Errore durante l'import CSV.",
+      "missingFields": "Inserisci codice, prezzo e descrizione.",
+      "codeAlreadyExists": "Codice gia presente in inventario.",
+      "saveItem": "Errore durante il salvataggio.",
+      "deleteItem": "Errore durante la cancellazione.",
+      "codeNotFound": "Codice non trovato in inventario."
+    },
+    "modal": {
+      "confirmTitle": "Conferma azione",
+      "confirmMessage": "Sei sicuro di voler procedere?",
+      "confirmDeleteTitle": "Conferma eliminazione",
+      "confirmDeleteItem": "Vuoi eliminare \"{description}\" ({code}) dall'inventario?",
+      "clearReceiptTitle": "Azzera scontrino",
+      "clearReceiptMessage": "Questa azione rimuovera tutti gli articoli dallo scontrino corrente."
+    },
+    "placeholders": {
+      "productCode": "Codice prodotto (es. A7K9M2B5)",
+      "description": "Descrizione (es. Banana)",
+      "price": "Prezzo €",
+      "iconCode": "Codice icona (es. 1F34C)",
+      "scanCode": "Scansiona o scrivi il codice qui"
+    },
+    "a11y": {
+      "notification": "notifica",
+      "closeNotification": "Chiudi notifica",
+      "connected": "connesso",
+      "pending": "attesa",
+      "error": "errore",
+      "import": "importa",
+      "add": "aggiungi",
+      "save": "salva",
+      "emoji": "emoji"
+    },
+    "emoji": {
+      "categories": {
+        "fruit": "Frutta",
+        "vegetables": "Verdura e ortaggi",
+        "groceries": "Alimentari e pane",
+        "meatFish": "Carne e pesce",
+        "snacks": "Snack e dolci",
+        "drinks": "Bevande",
+        "homeHygiene": "Casa e igiene",
+        "cleaning": "Pulizia",
+        "school": "Articoli scolastici",
+        "books": "Libri e media",
+        "toys": "Giocattoli",
+        "sports": "Sport e tempo libero",
+        "accessories": "Accessori",
+        "technology": "Tecnologia",
+        "natureAnimals": "Natura e animali"
+      }
+    }
+  },
+  "en": {
+    "app": {
+      "title": "Mini Supermarket"
+    },
+    "inventory": {
+      "title": "Inventory",
+      "newItem": "New item",
+      "csvHint": "CSV format: code,price,description,emoji (emoji optional)",
+      "itemsInInventory": "Items in inventory",
+      "empty": "No products available.",
+      "code": "Code",
+      "qrUnavailable": "QR not available",
+      "emojiSelector": "Emoji selector"
+    },
+    "checkout": {
+      "title": "Receipt",
+      "total": "Total",
+      "hint": "Tip: in the inventory list click \"Add\" to send the item code to the receipt.",
+      "empty": "Receipt is empty."
+    },
+    "db": {
+      "connected": "PostgreSQL connected",
+      "connecting": "Connecting to PostgreSQL...",
+      "disconnected": "PostgreSQL database disconnected"
+    },
+    "actions": {
+      "reload": "Reload",
+      "chooseEmoji": "Choose emoji",
+      "add": "Add",
+      "importCsv": "Import CSV",
+      "importing": "Import in progress...",
+      "clearReceipt": "Clear receipt",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "edit": "Edit",
+      "delete": "Delete",
+      "saveChanges": "Save changes",
+      "clear": "Clear",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity",
+      "chooseIcon": "Choose icon"
+    },
+    "messages": {
+      "importCompleted": "Import completed. Created: {created}, updated: {updated}.",
+      "itemUpdated": "Item updated successfully.",
+      "itemUpdatedWithNewCode": "Item updated with a new code.",
+      "itemAdded": "Item added successfully.",
+      "itemDeleted": "Item deleted.",
+      "receiptAlreadyEmpty": "Receipt is already empty.",
+      "receiptCleared": "Receipt cleared."
+    },
+    "errors": {
+      "apiError": "API error",
+      "invalidCsvRow": "Invalid data at row {row}.",
+      "emptyCsv": "The CSV file is empty.",
+      "noValidCsvItems": "No valid products found in CSV.",
+      "importCsv": "Error while importing CSV.",
+      "missingFields": "Please enter code, price, and description.",
+      "codeAlreadyExists": "Code already exists in inventory.",
+      "saveItem": "Error while saving item.",
+      "deleteItem": "Error while deleting item.",
+      "codeNotFound": "Code not found in inventory."
+    },
+    "modal": {
+      "confirmTitle": "Confirm action",
+      "confirmMessage": "Are you sure you want to continue?",
+      "confirmDeleteTitle": "Confirm deletion",
+      "confirmDeleteItem": "Do you want to delete \"{description}\" ({code}) from inventory?",
+      "clearReceiptTitle": "Clear receipt",
+      "clearReceiptMessage": "This action will remove all items from the current receipt."
+    },
+    "placeholders": {
+      "productCode": "Product code (e.g. A7K9M2B5)",
+      "description": "Description (e.g. Banana)",
+      "price": "Price €",
+      "iconCode": "Icon code (e.g. 1F34C)",
+      "scanCode": "Scan or type the code here"
+    },
+    "a11y": {
+      "notification": "notification",
+      "closeNotification": "Close notification",
+      "connected": "connected",
+      "pending": "pending",
+      "error": "error",
+      "import": "import",
+      "add": "add",
+      "save": "save",
+      "emoji": "emoji"
+    },
+    "emoji": {
+      "categories": {
+        "fruit": "Fruit",
+        "vegetables": "Vegetables",
+        "groceries": "Groceries and bread",
+        "meatFish": "Meat and fish",
+        "snacks": "Snacks and sweets",
+        "drinks": "Drinks",
+        "homeHygiene": "Home and hygiene",
+        "cleaning": "Cleaning",
+        "school": "School supplies",
+        "books": "Books and media",
+        "toys": "Toys",
+        "sports": "Sports and leisure",
+        "accessories": "Accessories",
+        "technology": "Technology",
+        "natureAnimals": "Nature and animals"
+      }
+    }
+  }
+}

@@ -27,6 +27,7 @@ const pool = new Pool({
 
 const app = express();
 app.use(express.json());
+app.disable("x-powered-by");
 
 async function initDb() {
     await pool.query(`
@@ -34,7 +35,7 @@ async function initDb() {
             codice TEXT PRIMARY KEY,
             prezzo NUMERIC(12, 2) NOT NULL,
             descrizione TEXT NOT NULL,
-            emoji TEXT NOT NULL DEFAULT '🛒',
+            emoji TEXT NOT NULL DEFAULT '1F6D2',
             updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
         );
     `);
@@ -66,8 +67,8 @@ app.get("/api/health", async (_req, res) => {
         await pool.query("SELECT 1");
         res.json({ ok: true });
     } catch (error) {
-        console.error("Errore health check:", error);
-        res.status(500).json({ ok: false, message: "Database non raggiungibile" });
+        console.error("Health check error:", error);
+        res.status(500).json({ ok: false, message: "Database unreachable" });
     }
 });
 
@@ -78,15 +79,15 @@ app.get("/api/inventario", async (_req, res) => {
         );
         res.json(result.rows);
     } catch (error) {
-        console.error("Errore lettura inventario:", error);
-        res.status(500).json({ message: "Errore caricamento inventario" });
+        console.error("Inventory read error:", error);
+        res.status(500).json({ message: "Inventory loading error" });
     }
 });
 
 app.post("/api/inventario", async (req, res) => {
-    const { codice, prezzo, descrizione, emoji } = req.body || {};
-    if (!codice || typeof descrizione !== "string" || !Number.isFinite(Number(prezzo))) {
-        res.status(400).json({ message: "Dati articolo non validi" });
+    const { codice: code, prezzo: price, descrizione: description, emoji } = req.body || {};
+    if (!code || typeof description !== "string" || !Number.isFinite(Number(price))) {
+        res.status(400).json({ message: "Invalid item data" });
         return;
     }
 
@@ -94,28 +95,28 @@ app.post("/api/inventario", async (req, res) => {
         const result = await pool.query(
             `
             INSERT INTO inventario (codice, prezzo, descrizione, emoji)
-            VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), '🛒'))
+            VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), '1F6D2'))
             RETURNING codice, prezzo::float8 AS prezzo, descrizione, emoji
             `,
-            [String(codice).toUpperCase(), Number(prezzo), descrizione.trim(), String(emoji || "").trim()]
+            [String(code).toUpperCase(), Number(price), description.trim(), String(emoji || "").trim()]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
         if (error?.code === "23505") {
-            res.status(409).json({ message: "Codice già presente in inventario" });
+            res.status(409).json({ message: "Code already exists in inventory" });
             return;
         }
-        console.error("Errore inserimento articolo:", error);
-        res.status(500).json({ message: "Errore salvataggio articolo" });
+        console.error("Item insert error:", error);
+        res.status(500).json({ message: "Item save error" });
     }
 });
 
 app.put("/api/inventario/:codice", async (req, res) => {
-    const codiceParam = String(req.params.codice || "").toUpperCase();
-    const { prezzo, descrizione, emoji } = req.body || {};
+    const codeParam = String(req.params.codice || "").toUpperCase();
+    const { prezzo: price, descrizione: description, emoji } = req.body || {};
 
-    if (!codiceParam || typeof descrizione !== "string" || !Number.isFinite(Number(prezzo))) {
-        res.status(400).json({ message: "Dati articolo non validi" });
+    if (!codeParam || typeof description !== "string" || !Number.isFinite(Number(price))) {
+        res.status(400).json({ message: "Invalid item data" });
         return;
     }
 
@@ -125,54 +126,54 @@ app.put("/api/inventario/:codice", async (req, res) => {
             UPDATE inventario
             SET prezzo = $2,
                 descrizione = $3,
-                emoji = COALESCE(NULLIF($4, ''), '🛒'),
+                emoji = COALESCE(NULLIF($4, ''), '1F6D2'),
                 updated_at = NOW()
             WHERE codice = $1
             RETURNING codice, prezzo::float8 AS prezzo, descrizione, emoji
             `,
-            [codiceParam, Number(prezzo), descrizione.trim(), String(emoji || "").trim()]
+            [codeParam, Number(price), description.trim(), String(emoji || "").trim()]
         );
 
         if (result.rows.length === 0) {
-            res.status(404).json({ message: "Articolo non trovato" });
+            res.status(404).json({ message: "Item not found" });
             return;
         }
 
         res.json(result.rows[0]);
     } catch (error) {
-        console.error("Errore aggiornamento articolo:", error);
-        res.status(500).json({ message: "Errore aggiornamento articolo" });
+        console.error("Item update error:", error);
+        res.status(500).json({ message: "Item update error" });
     }
 });
 
 app.delete("/api/inventario/:codice", async (req, res) => {
-    const codiceParam = String(req.params.codice || "").toUpperCase();
-    if (!codiceParam) {
-        res.status(400).json({ message: "Codice mancante" });
+    const codeParam = String(req.params.codice || "").toUpperCase();
+    if (!codeParam) {
+        res.status(400).json({ message: "Missing code" });
         return;
     }
 
     try {
         const result = await pool.query(
             "DELETE FROM inventario WHERE codice = $1 RETURNING codice",
-            [codiceParam]
+            [codeParam]
         );
 
         if (result.rows.length === 0) {
-            res.status(404).json({ message: "Articolo non trovato" });
+            res.status(404).json({ message: "Item not found" });
             return;
         }
 
         res.status(204).send();
     } catch (error) {
-        console.error("Errore cancellazione articolo:", error);
-        res.status(500).json({ message: "Errore cancellazione articolo" });
+        console.error("Item delete error:", error);
+        res.status(500).json({ message: "Item delete error" });
     }
 });
 
 app.use((error, _req, res, _next) => {
-    console.error("Errore API:", error);
-    res.status(500).json({ message: "Errore interno server" });
+    console.error("API error:", error);
+    res.status(500).json({ message: "Internal server error" });
 });
 
 module.exports = app;
