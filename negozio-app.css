@@ -11,6 +11,9 @@
 }
 
 * {
+    /* Ensure SVG emoji images align with text */
+    vertical-align: middle;
+    }
     box-sizing: border-box;
 }
 
