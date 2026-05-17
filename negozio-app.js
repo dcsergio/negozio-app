@@ -134,7 +134,7 @@ function openMojiUrl(emoji) {
     if (!codepoint) {
         return "";
     }
-    return `node_modules/openmoji/color/svg/${codepoint}.svg`;
+    return `https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/${codepoint}.svg`;
 }
 
 function renderEmojiImage(emoji, alt = "icon", className = "emoji-img") {
