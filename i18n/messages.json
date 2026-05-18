@@ -200,12 +200,12 @@
       "import": "import",
       "add": "add",
       "save": "save",
-          "nav": {
-            "allViews": "📊 All views",
-            "inventory": "📦 Inventory",
-            "checkout": "🧾 Checkout"
-          },
       "emoji": "emoji"
+    },
+    "nav": {
+      "allViews": "📊 All views",
+      "inventory": "📦 Inventory",
+      "checkout": "🧾 Checkout"
     },
     "emoji": {
       "categories": {
