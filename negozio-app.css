@@ -129,6 +129,52 @@ body {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 16px;
     align-items: start;
+
+.page-nav {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1.5px solid #e8e8ef;
+    border-radius: 12px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: #ffffff;
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 122, 47, 0.15);
+}
+
+.layout.layout-single {
+    display: block;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.layout.layout-single #inventoryPanel {
+    grid-column: auto;
+    display: block;
+}
+
+.layout.layout-single #checkoutPanel {
+    grid-column: auto;
+    align-self: auto;
+}
+
 }
 
 #inventoryPanel {

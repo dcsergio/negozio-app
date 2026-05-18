@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="app.title">Mini Supermarket</title>
+    <title data-i18n="inventory.title">Inventory - Mini Supermarket</title>
     <link rel="stylesheet" href="negozio-app.css">
 </head>
 <body>
@@ -16,11 +16,11 @@
     </header>
 
     <nav class="page-nav">
-        <a href="inventory.html" class="nav-link" data-i18n="nav.inventory">📦 Inventory</a>
+        <a href="index.html" class="nav-link" data-i18n="nav.allViews">📊 All views</a>
         <a href="checkout.html" class="nav-link" data-i18n="nav.checkout">🧾 Checkout</a>
     </nav>
 
-    <main class="layout">
+    <main class="layout layout-single">
         <section class="panel" id="inventoryPanel">
             <h2><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F4E6.svg" alt="package" width="22" height="22"> <span data-i18n="inventory.title">Inventory</span></h2>
 
@@ -56,19 +56,6 @@
                 <h3 class="inventory-section-title" data-i18n="inventory.itemsInInventory">Items in inventory</h3>
                 <div id="itemList" class="inventory-list"></div>
             </section>
-        </section>
-
-        <section class="panel" id="checkoutPanel">
-            <h2><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F9FE.svg" alt="receipt" width="22" height="22"> <span data-i18n="checkout.title">Receipt</span></h2>
-
-            <div class="cash-controls">
-                <input type="text" id="checkoutCode" data-i18n-placeholder="placeholders.scanCode" placeholder="Scan or type the code here">
-                <button id="btnClearReceipt" onclick="clearReceipt()"><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F5D1.svg" alt="trash" width="16" height="16"> <span data-i18n="actions.clearReceipt">Clear receipt</span></button>
-            </div>
-
-            <div id="receipt"></div>
-            <div class="total"><span data-i18n="checkout.total">Total</span>: €<span id="total">0.00</span></div>
-            <p class="hint" data-i18n="checkout.hint">Tip: in the inventory list click "Add" to send the item code to the receipt.</p>
         </section>
     </main>
 
