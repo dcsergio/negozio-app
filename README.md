@@ -48,7 +48,19 @@ Scenario tipico:
 npm install
 ```
 
-2. Crea il file ambiente partendo dall'esempio:
+2. Attiva gli hook Git del progetto (blocca commit/push su main):
+
+```bash
+npm run setup-hooks
+```
+
+3. Crea sempre un branch dedicato prima di modificare file:
+
+```bash
+npm run start-branch -- fix/nome-branch
+```
+
+4. Crea il file ambiente partendo dall'esempio:
 
 Windows (PowerShell):
 
@@ -62,20 +74,26 @@ macOS/Linux:
 cp .env.example .env
 ```
 
-3. Configura almeno queste variabili in .env:
+5. Configura almeno queste variabili in .env:
 
 - DATABASE_URL=postgresql://user:password@host:5432/dbname
 - PORT=3000
 
-4. Avvia il server:
+6. Avvia il server:
 
 ```bash
 npm start
 ```
 
-5. Apri il browser su:
+7. Apri il browser su:
 
 - http://localhost:3000
+
+## Workflow branch-first
+
+- Il branch `main` e riservato: commit e push sono bloccati dagli hook locali.
+- Prima di iniziare qualsiasi modifica, crea/switcha un branch di lavoro con `npm run start-branch -- tipo/nome`.
+- Flussi consigliati: `fix/*`, `feat/*`, `chore/*`.
 
 ## Formato CSV per import
 

@@ -5,7 +5,9 @@
   "description": "Mini supermercato con persistenza PostgreSQL",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "setup-hooks": "git config core.hooksPath .githooks",
+    "start-branch": "node scripts/start-work-branch.js"
   },
   "dependencies": {
     "express": "^4.21.2",

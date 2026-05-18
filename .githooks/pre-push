@@ -1,0 +1,11 @@
+#!/bin/sh
+
+branch_name="$(git rev-parse --abbrev-ref HEAD)"
+
+if [ "$branch_name" = "main" ] || [ "$branch_name" = "master" ]; then
+  echo "[STOP] Push bloccato su $branch_name."
+  echo "Apri una PR da un branch dedicato."
+  exit 1
+fi
+
+exit 0
