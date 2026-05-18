@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="checkout.title">Checkout - Mini Supermarket</title>
+    <link rel="stylesheet" href="negozio-app.css">
+</head>
+<body>
+    <header class="top-bar">
+        <h1 class="page-title"><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F6CD.svg" alt="shopping bags" width="24" height="24"> <span data-i18n="app.title">Mini Supermarket</span></h1>
+        <div class="language-switch" aria-label="Language selector">
+            <button type="button" id="langIt" class="lang-btn" onclick="setLanguage('it')">ITA</button>
+            <button type="button" id="langEn" class="lang-btn" onclick="setLanguage('en')">ENG</button>
+        </div>
+    </header>
+
+    <nav class="page-nav">
+        <a href="index.html" class="nav-link" data-i18n="nav.allViews">📊 All views</a>
+        <a href="inventory.html" class="nav-link" data-i18n="nav.inventory">📦 Inventory</a>
+    </nav>
+
+    <main class="layout layout-single">
+        <section class="panel" id="checkoutPanel">
+            <h2><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F9FE.svg" alt="receipt" width="22" height="22"> <span data-i18n="checkout.title">Receipt</span></h2>
+
+            <div class="cash-controls">
+                <input type="text" id="checkoutCode" data-i18n-placeholder="placeholders.scanCode" placeholder="Scan or type the code here">
+                <button id="btnClearReceipt" onclick="clearReceipt()"><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F5D1.svg" alt="trash" width="16" height="16"> <span data-i18n="actions.clearReceipt">Clear receipt</span></button>
+            </div>
+
+            <div id="receipt"></div>
+            <div class="total"><span data-i18n="checkout.total">Total</span>: €<span id="total">0.00</span></div>
+            <p class="hint" data-i18n="checkout.hint">Tip: in the inventory list click "Add" to send the item code to the receipt.</p>
+        </section>
+    </main>
+
+    <div id="popupContainer" class="popup-container" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="confirmModal" class="confirm-modal" aria-hidden="true">
+        <div class="confirm-modal-backdrop" data-modal-close="true"></div>
+        <dialog class="confirm-modal-card" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage">
+            <h3 id="confirmModalTitle" class="confirm-modal-title" data-i18n="modal.confirmTitle">Confirm action</h3>
+            <p id="confirmModalMessage" class="confirm-modal-message" data-i18n="modal.confirmMessage">Are you sure you want to continue?</p>
+            <div class="confirm-modal-actions">
+                <button type="button" id="confirmModalCancel" class="confirm-btn confirm-btn-cancel" data-i18n="actions.cancel">Cancel</button>
+                <button type="button" id="confirmModalConfirm" class="confirm-btn confirm-btn-danger" data-i18n="actions.confirm">Confirm</button>
+            </div>
+        </dialog>
+    </div>
+
+    <script src="vendor/qrcode.min.js"></script>
+    <script src="negozio-app.js"></script>
+</body>
+</html>

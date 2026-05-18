@@ -88,6 +88,11 @@
       "save": "salva",
       "emoji": "emoji"
     },
+    "nav": {
+      "allViews": "📊 Tutte le visualizzazioni",
+      "inventory": "📦 Magazzino",
+      "checkout": "🧾 Scontrino"
+    },
     "emoji": {
       "categories": {
         "fruit": "Frutta",
@@ -195,6 +200,11 @@
       "import": "import",
       "add": "add",
       "save": "save",
+          "nav": {
+            "allViews": "📊 All views",
+            "inventory": "📦 Inventory",
+            "checkout": "🧾 Checkout"
+          },
       "emoji": "emoji"
     },
     "emoji": {
