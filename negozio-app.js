@@ -956,8 +956,7 @@ window.addEventListener("load", async () => {
         console.error("Translation loading error:", error);
     }
 
-    const preferred = localStorage.getItem("negozio.lang") || "en";
-    setDocumentLanguage(preferred);
+    setDocumentLanguage("it");
 
     const importFileInput = document.getElementById("csvImportFile");
     if (importFileInput) {

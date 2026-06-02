@@ -1,7 +1,7 @@
 {
   "it": {
     "app": {
-      "title": "Mini Supermercato"
+      "title": "Supermercato"
     },
     "inventory": {
       "title": "Magazzino",
@@ -115,7 +115,7 @@
   },
   "en": {
     "app": {
-      "title": "Mini Supermarket"
+      "title": "Supermarket"
     },
     "inventory": {
       "title": "Inventory",
