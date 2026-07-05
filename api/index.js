@@ -30,8 +30,9 @@ app.use(express.json());
 app.disable("x-powered-by");
 
 async function initDb() {
+    await pool.query("CREATE SCHEMA IF NOT EXISTS sedapp;");
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS inventario (
+        CREATE TABLE IF NOT EXISTS sedapp.inventario (
             codice TEXT PRIMARY KEY,
             prezzo NUMERIC(12, 2) NOT NULL,
             descrizione TEXT NOT NULL,
@@ -75,7 +76,7 @@ app.get("/api/health", async (_req, res) => {
 app.get("/api/inventario", async (_req, res) => {
     try {
         const result = await pool.query(
-            "SELECT codice, prezzo::float8 AS prezzo, descrizione, emoji FROM inventario ORDER BY codice"
+            "SELECT codice, prezzo::float8 AS prezzo, descrizione, emoji FROM sedapp.inventario ORDER BY codice"
         );
         res.json(result.rows);
     } catch (error) {
@@ -94,7 +95,7 @@ app.post("/api/inventario", async (req, res) => {
     try {
         const result = await pool.query(
             `
-            INSERT INTO inventario (codice, prezzo, descrizione, emoji)
+            INSERT INTO sedapp.inventario (codice, prezzo, descrizione, emoji)
             VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), '1F6D2'))
             RETURNING codice, prezzo::float8 AS prezzo, descrizione, emoji
             `,
@@ -123,7 +124,7 @@ app.put("/api/inventario/:codice", async (req, res) => {
     try {
         const result = await pool.query(
             `
-            UPDATE inventario
+            UPDATE sedapp.inventario
             SET prezzo = $2,
                 descrizione = $3,
                 emoji = COALESCE(NULLIF($4, ''), '1F6D2'),
@@ -155,7 +156,7 @@ app.delete("/api/inventario/:codice", async (req, res) => {
 
     try {
         const result = await pool.query(
-            "DELETE FROM inventario WHERE codice = $1 RETURNING codice",
+            "DELETE FROM sedapp.inventario WHERE codice = $1 RETURNING codice",
             [codeParam]
         );
 

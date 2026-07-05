@@ -21,7 +21,7 @@ Scenario tipico:
 
 ## Funzionalita principali
 
-- Gestione inventario con persistenza PostgreSQL.
+- Gestione inventario con persistenza PostgreSQL nello schema `sedapp`.
 - Creazione, modifica ed eliminazione articoli.
 - Generazione QR locale per ogni prodotto.
 - Import prodotti da CSV con aggiornamento automatico dei codici esistenti.
@@ -37,7 +37,7 @@ Scenario tipico:
 ## Requisiti
 
 - Node.js 18+ (consigliato 20+).
-- Database PostgreSQL raggiungibile.
+- Database PostgreSQL raggiungibile, con permessi per creare schema e tabelle.
 - Opzionale: lettore QR USB in modalita keyboard wedge (si comporta come tastiera).
 
 ## Avvio rapido
@@ -158,6 +158,7 @@ Note importanti:
 - La route / serve automaticamente index.html.
 - Le chiamate frontend verso /api/* sono gia compatibili con Vercel.
 - In produzione Vercel non viene letto il file .env locale.
+- Al primo avvio l'app crea automaticamente lo schema `sedapp` e la tabella `sedapp.inventario` se non esistono.
 
 ## Struttura progetto
 
