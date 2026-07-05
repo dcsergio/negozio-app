@@ -1,3 +1,8 @@
+---
+name: Negozio App Project Guide
+description: Rules and context for the negozio-app mini-supermarket project.
+---
+
 # CONTINUE.md - Project Guide for negozio-app
 
 Welcome to the `negozio-app` developer guide. This document provides an overview of the project's architecture, development workflow, and technical conventions.

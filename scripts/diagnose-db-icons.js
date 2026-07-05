@@ -85,8 +85,9 @@ async function main() {
     });
 
     try {
+        await pool.query("CREATE SCHEMA IF NOT EXISTS sedapp;");
         const result = await pool.query(
-            "SELECT codice, descrizione, emoji FROM inventario ORDER BY codice"
+            "SELECT codice, descrizione, emoji FROM sedapp.inventario ORDER BY codice"
         );
 
         const rows = result.rows;
