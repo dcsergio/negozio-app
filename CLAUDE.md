@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Negoziо-app** is an educational mini supermarket application with inventory management, checkout, and QR code generation. It uses PostgreSQL for persistence and supports both local development (Express) and Vercel deployment (serverless functions).
+**Negoziо-app** is an educational market application with inventory management, checkout, and QR code generation. It uses PostgreSQL for persistence and supports both local development (Express) and Vercel deployment (serverless functions).
 
 **Stack:**
 - Frontend: HTML + CSS + vanilla JavaScript (ES modules not used - scripts loaded via `<script>` tags)

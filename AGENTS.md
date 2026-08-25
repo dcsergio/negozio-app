@@ -4,7 +4,7 @@ Operational guidelines for AI agents and collaborators editing this repository.
 
 ## Project context
 - Name: `negozio-app`
-- Goal: educational mini supermarket with inventory, checkout, and QR.
+- Goal: educational market with inventory, checkout, and QR.
 - Stack:
 	- Frontend: HTML + CSS + vanilla JavaScript.
 	- Local backend: Node.js + Express (`server.js`).
