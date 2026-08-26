@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="checkout.title">Checkout - Minimarket</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="negozio-app.css">
 </head>
 <body>
@@ -16,9 +19,9 @@
     </header>
 
     <nav class="page-nav">
-        <a href="index.html" class="nav-link" data-i18n="nav.allViews">📊 All views</a>
-        <a href="inventory.html" class="nav-link" data-i18n="nav.inventory">📦 Inventory</a>
-        <span class="nav-link nav-link-active" aria-current="page" data-i18n="nav.checkout">🧾 Checkout</span>
+        <a href="index.html" class="nav-link" data-i18n="nav.allViews">All views</a>
+        <a href="inventory.html" class="nav-link" data-i18n="nav.inventory">Inventory</a>
+        <span class="nav-link nav-link-active" aria-current="page" data-i18n="nav.checkout">Checkout</span>
     </nav>
 
     <main class="layout layout-single">
@@ -26,7 +29,10 @@
             <h2><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F9FE.svg" alt="receipt" width="22" height="22"> <span data-i18n="checkout.title">Receipt</span></h2>
 
             <div class="cash-controls">
-                <input type="text" id="checkoutCode" data-i18n-placeholder="placeholders.scanCode" placeholder="Scan or type the code here">
+                <div class="field">
+                    <label for="checkoutCode" data-i18n="labels.scan">Scan code</label>
+                    <input type="text" id="checkoutCode" data-i18n-placeholder="placeholders.scanCode" placeholder="Scan or type the code here">
+                </div>
                 <button id="btnClearReceipt" onclick="clearReceipt()"><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F5D1.svg" alt="trash" width="16" height="16"> <span data-i18n="actions.clearReceipt">Clear receipt</span></button>
             </div>
 
