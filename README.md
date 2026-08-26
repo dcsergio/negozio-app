@@ -27,6 +27,7 @@ Scenario tipico:
 - Import prodotti da CSV con aggiornamento automatico dei codici esistenti.
 - Cassa con scontrino e calcolo totale.
 - Selettore emoji per rendere i prodotti riconoscibili anche ai piu piccoli.
+- Interfaccia con tema chiaro e scuro automatico (segue le impostazioni del sistema).
 
 ## Stack tecnico
 
