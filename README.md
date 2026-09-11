@@ -21,12 +21,13 @@ Scenario tipico:
 
 ## Funzionalita principali
 
-- Gestione inventario con persistenza PostgreSQL nello schema `sedapp`.
+- Gestione inventario con persistenza PostgreSQL nello schema `mercato`.
 - Creazione, modifica ed eliminazione articoli.
 - Generazione QR locale per ogni prodotto.
 - Import prodotti da CSV con aggiornamento automatico dei codici esistenti.
 - Cassa con scontrino e calcolo totale.
 - Selettore emoji per rendere i prodotti riconoscibili anche ai piu piccoli.
+- Interfaccia con tema chiaro e scuro automatico (segue le impostazioni del sistema).
 
 ## Stack tecnico
 
@@ -158,7 +159,7 @@ Note importanti:
 - La route / serve automaticamente index.html.
 - Le chiamate frontend verso /api/* sono gia compatibili con Vercel.
 - In produzione Vercel non viene letto il file .env locale.
-- Al primo avvio l'app crea automaticamente lo schema `sedapp` e la tabella `sedapp.inventario` se non esistono.
+- Al primo avvio l'app crea automaticamente lo schema `mercato` e la tabella `mercato.inventario` se non esistono.
 
 ## Struttura progetto
 

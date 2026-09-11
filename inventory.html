@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="inventory.title">Inventory - Minimarket</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="negozio-app.css">
 </head>
 <body>
@@ -16,9 +19,9 @@
     </header>
 
     <nav class="page-nav">
-        <a href="index.html" class="nav-link" data-i18n="nav.allViews">📊 All views</a>
-        <span class="nav-link nav-link-active" aria-current="page" data-i18n="nav.inventory">📦 Inventory</span>
-        <a href="checkout.html" class="nav-link" data-i18n="nav.checkout">🧾 Checkout</a>
+        <a href="index.html" class="nav-link" data-i18n="nav.allViews">All views</a>
+        <span class="nav-link nav-link-active" aria-current="page" data-i18n="nav.inventory">Inventory</span>
+        <a href="checkout.html" class="nav-link" data-i18n="nav.checkout">Checkout</a>
     </nav>
 
     <main class="layout layout-single">
@@ -35,10 +38,20 @@
             <section class="inventory-create">
                 <h3 class="inventory-section-title" data-i18n="inventory.newItem">New item</h3>
                 <div class="form-grid">
-                    <input type="text" id="code" data-i18n-placeholder="placeholders.productCode" placeholder="Product code (e.g. A7K9M2B5)">
-                    <input type="text" id="description" data-i18n-placeholder="placeholders.description" placeholder="Description (e.g. Banana)">
-                    <input type="number" step="0.01" id="price" data-i18n-placeholder="placeholders.price" placeholder="Price €">
-                    <div class="emoji-field">
+                    <div class="field">
+                        <label for="code" data-i18n="labels.code">Code</label>
+                        <input type="text" id="code" data-i18n-placeholder="placeholders.productCode" placeholder="Product code (e.g. A7K9M2B5)">
+                    </div>
+                    <div class="field">
+                        <label for="description" data-i18n="labels.description">Description</label>
+                        <input type="text" id="description" data-i18n-placeholder="placeholders.description" placeholder="Description (e.g. Banana)">
+                    </div>
+                    <div class="field">
+                        <label for="price" data-i18n="labels.price">Price</label>
+                        <input type="number" step="0.01" id="price" data-i18n-placeholder="placeholders.price" placeholder="Price €">
+                    </div>
+                    <div class="field emoji-field">
+                        <label for="emoji" data-i18n="labels.icon">Icon</label>
                         <input type="text" id="emoji" data-i18n-placeholder="placeholders.iconCode" placeholder="Icon code (e.g. 1F34C)" maxlength="32" autocomplete="off">
                         <button type="button" id="emojiToggle" class="emoji-toggle" data-i18n-aria-label="actions.chooseEmoji" aria-label="Choose emoji"><img class="emoji-img" src="https://cdn.jsdelivr.net/npm/openmoji@17.0.0/color/svg/1F600.svg" alt="emoji picker" width="20" height="20"></button>
                         <div id="emojiPicker" class="emoji-picker" data-i18n-aria-label="inventory.emojiSelector" aria-label="Emoji selector"></div>

@@ -106,8 +106,8 @@ async function main() {
     });
 
     try {
-        await pool.query("CREATE SCHEMA IF NOT EXISTS sedapp;");
-        const { rows } = await pool.query("SELECT codice, descrizione, emoji FROM sedapp.inventario ORDER BY codice");
+        await pool.query("CREATE SCHEMA IF NOT EXISTS mercato;");
+        const { rows } = await pool.query("SELECT codice, descrizione, emoji FROM mercato.inventario ORDER BY codice");
 
         const updates = [];
         for (const row of rows) {
@@ -119,7 +119,7 @@ async function main() {
         }
 
         for (const upd of updates) {
-            await pool.query("UPDATE sedapp.inventario SET emoji = $2, updated_at = NOW() WHERE codice = $1", [upd.codice, upd.to]);
+            await pool.query("UPDATE mercato.inventario SET emoji = $2, updated_at = NOW() WHERE codice = $1", [upd.codice, upd.to]);
         }
 
         console.log(`Analyzed records: ${rows.length}`);

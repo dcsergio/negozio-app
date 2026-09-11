@@ -41,6 +41,13 @@
       "increaseQuantity": "Aumenta quantita",
       "chooseIcon": "Seleziona icona"
     },
+    "labels": {
+      "code": "Codice",
+      "description": "Descrizione",
+      "price": "Prezzo",
+      "icon": "Icona",
+      "scan": "Scansiona codice"
+    },
     "messages": {
       "importCompleted": "Import completato. Creati: {created}, aggiornati: {updated}.",
       "itemUpdated": "Articolo aggiornato con successo.",
@@ -89,9 +96,9 @@
       "emoji": "emoji"
     },
     "nav": {
-      "allViews": "📊 Schermata unica",
-      "inventory": "📦 Magazzino",
-      "checkout": "🧾 Scontrino"
+      "allViews": "Schermata unica",
+      "inventory": "Magazzino",
+      "checkout": "Scontrino"
     },
     "emoji": {
       "categories": {
@@ -155,6 +162,13 @@
       "increaseQuantity": "Increase quantity",
       "chooseIcon": "Choose icon"
     },
+    "labels": {
+      "code": "Code",
+      "description": "Description",
+      "price": "Price",
+      "icon": "Icon",
+      "scan": "Scan code"
+    },
     "messages": {
       "importCompleted": "Import completed. Created: {created}, updated: {updated}.",
       "itemUpdated": "Item updated successfully.",
@@ -203,9 +217,9 @@
       "emoji": "emoji"
     },
     "nav": {
-      "allViews": "📊 All views",
-      "inventory": "📦 Inventory",
-      "checkout": "🧾 Checkout"
+      "allViews": "All views",
+      "inventory": "Inventory",
+      "checkout": "Checkout"
     },
     "emoji": {
       "categories": {
