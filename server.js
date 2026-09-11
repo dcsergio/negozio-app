@@ -44,9 +44,10 @@ function normalizeDatabaseUrl(rawValue) {
     return trimmed;
 }
 
-const DATABASE_URL = normalizeDatabaseUrl(
-    process.env.DATABASE_URL || "jdbc:postgresql://aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
-);
+const DATABASE_URL = normalizeDatabaseUrl(process.env.DATABASE_URL);
+if (!DATABASE_URL) {
+    throw new Error("Missing DATABASE_URL environment variable");
+}
 const PORT = Number(process.env.PORT || 3000);
 const MAX_PORT_RETRIES = 10;
 
@@ -65,9 +66,9 @@ app.use(express.static(__dirname));
 app.disable("x-powered-by");
 
 async function initDb() {
-    await pool.query("CREATE SCHEMA IF NOT EXISTS sedapp;");
+    await pool.query("CREATE SCHEMA IF NOT EXISTS mercato;");
     await pool.query(`
-        CREATE TABLE IF NOT EXISTS sedapp.inventario (
+        CREATE TABLE IF NOT EXISTS mercato.inventario (
             codice TEXT PRIMARY KEY,
             prezzo NUMERIC(12, 2) NOT NULL,
             descrizione TEXT NOT NULL,
@@ -90,7 +91,7 @@ app.get("/api/health", async (_req, res) => {
 app.get("/api/inventario", async (_req, res) => {
     try {
         const result = await pool.query(
-            "SELECT codice, prezzo::float8 AS prezzo, descrizione, emoji FROM sedapp.inventario ORDER BY codice"
+            "SELECT codice, prezzo::float8 AS prezzo, descrizione, emoji FROM mercato.inventario ORDER BY codice"
         );
         res.json(result.rows);
     } catch (error) {
@@ -109,7 +110,7 @@ app.post("/api/inventario", async (req, res) => {
     try {
         const result = await pool.query(
             `
-            INSERT INTO sedapp.inventario (codice, prezzo, descrizione, emoji)
+            INSERT INTO mercato.inventario (codice, prezzo, descrizione, emoji)
             VALUES ($1, $2, $3, COALESCE(NULLIF($4, ''), '1F6D2'))
             RETURNING codice, prezzo::float8 AS prezzo, descrizione, emoji
             `,
@@ -138,7 +139,7 @@ app.put("/api/inventario/:codice", async (req, res) => {
     try {
         const result = await pool.query(
             `
-            UPDATE sedapp.inventario
+            UPDATE mercato.inventario
             SET prezzo = $2,
                 descrizione = $3,
                 emoji = COALESCE(NULLIF($4, ''), '1F6D2'),
@@ -170,7 +171,7 @@ app.delete("/api/inventario/:codice", async (req, res) => {
 
     try {
         const result = await pool.query(
-            "DELETE FROM sedapp.inventario WHERE codice = $1 RETURNING codice",
+            "DELETE FROM mercato.inventario WHERE codice = $1 RETURNING codice",
             [codeParam]
         );
 

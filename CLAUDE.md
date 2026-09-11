@@ -10,7 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Frontend: HTML + CSS + vanilla JavaScript (ES modules not used - scripts loaded via `<script>` tags)
 - Local backend: Node.js + Express (`server.js`)
 - Vercel deploy: Serverless function (`api/index.js`)
-- Database: PostgreSQL (`pg` driver, schema `sedapp`, table `inventario`)
+- Database: PostgreSQL (`pg` driver, schema `mercato`, table `inventario`)
 - i18n: Italian/English via JSON (`i18n/messages.json`)
 - Icons: OpenMoji via CDN (CDN links in HTML, also available locally via `openmoji` npm package for repair scripts)
 
@@ -39,8 +39,8 @@ negozio-app/
 ## Database Schema
 
 ```sql
-CREATE SCHEMA IF NOT EXISTS sedapp;
-CREATE TABLE IF NOT EXISTS sedapp.inventario (
+CREATE SCHEMA IF NOT EXISTS mercato;
+CREATE TABLE IF NOT EXISTS mercato.inventario (
     codice      TEXT PRIMARY KEY,
     prezzo      NUMERIC(12, 2) NOT NULL,
     descrizione TEXT NOT NULL,
